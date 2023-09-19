@@ -93,7 +93,9 @@
 		</div>
 		<figure v-if="!isCollection" class="img">
 			<div class="inner-img">
-				<NuxtLink><img src="~/assets/images/menu-img3.jpg" /></NuxtLink>
+				<NuxtLink
+					><NuxtImg  src="images/menu-img3.webp"
+				/></NuxtLink>
 			</div>
 			<figcaption>
 				shop the new summer 2023
@@ -104,7 +106,7 @@
 			<figure>
 				<div class="img-collection">
 					<NuxtLink
-						><img src="~/assets/images/img-collection1.webp"
+						><NuxtImg src="images/img-collection1.webp"
 					/></NuxtLink>
 				</div>
 				<figcaption>fall winnter</figcaption>
@@ -112,7 +114,7 @@
 			<figure>
 				<div class="img-collection">
 					<NuxtLink
-						><img src="~/assets/images/img-collection2.webp"
+						><NuxtImg src="images/img-collection2.webp"
 					/></NuxtLink>
 				</div>
 				<figcaption>spring summmer 2023</figcaption>

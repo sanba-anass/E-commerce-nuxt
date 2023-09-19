@@ -89,7 +89,7 @@
 				</div>
 				<div class="section-images">
 					<div class="section-img">
-						<NuxtImg src="/images/showcase5-img.gif" />
+						<video loop autoplay muted src="/images/showcase5-img.webm" />
 					</div>
 
 					<div class="section-img">
@@ -309,6 +309,13 @@ section .section-images {
 }
 
 section .section-images .section-img img {
+	width: 400px;
+}
+video{
+	max-width: 100%;
+	display: block;
+}
+section .section-images .section-img video {
 	width: 400px;
 }
 section .text {
