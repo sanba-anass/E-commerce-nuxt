@@ -11,9 +11,9 @@
 <style scoped>
 .account-img {
 	background: linear-gradient(
-			to bottom,
-			rgba(255, 255, 255, 0),
-			rgba(0, 0, 0, 0.6)
+			to top,
+			rgba(0, 0, 0, 0.445) 5%,
+			rgba(0, 0, 0, 0.11)
 		),
 		url(~/assets/images/login-img.jpg);
 
@@ -23,14 +23,15 @@
 	background-position: 0% 53%;
 	background-repeat: no-repeat;
 	font-size: 4rem;
-	color: rgba(255, 255, 255, 0.692);
+	color: rgb(255, 255, 255);
 	font-weight: 700;
 	text-transform: uppercase;
-	filter: brightness(140%);
+	filter: brightness(110%);
 	flex-shrink: 5;
 	padding-left: 2rem;
 	display: flex;
 	align-items: flex-end;
+	padding-bottom: 2rem;
 }
 @media (max-width: 75em) {
 	.account-img {

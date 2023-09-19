@@ -57,7 +57,7 @@
 				isVisible = false;
 			}
 		"
-		:class="{ isVisible, animation: !isVisible }"
+		:class="{ isVisible, animation: !isVisible && !isLoadingPage }"
 	>
 		<div v-if="!isCollection" class="none" :class="{ isVisible }">
 			<ul class="discover-Links">
@@ -122,6 +122,10 @@
 </template>
 
 <script setup>
+const isLoadingPage = ref(true);
+onBeforeMount(() => {
+	isLoadingPage.value = false;
+});
 const isVisible = ref(false);
 const isCollection = ref(false);
 const isOpen = ref(false);
@@ -132,6 +136,10 @@ const toggleDrawer = () => {
 </script>
 
 <style scoped>
+[v-cloak] {
+	display: none;
+}
+
 .tp {
 	z-index: 9999999;
 }
@@ -197,6 +205,7 @@ const toggleDrawer = () => {
 	padding: 3rem;
 	margin-top: 3rem;
 	position: fixed;
+	top: 0;
 	border-bottom: 1px solid rgb(223, 223, 223);
 }
 figcaption {
@@ -312,7 +321,8 @@ nav {
 	background-color: rgb(255, 255, 255);
 	max-width: 105rem;
 	margin: 0 auto;
-	position: fixed;
+	position: sticky;
+	top: 0;
 	z-index: 9999;
 	width: 100%;
 	border-bottom: 1px solid rgb(216, 216, 216);

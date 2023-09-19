@@ -98,6 +98,16 @@
 		width: 100%;
 	}
 }
+@media (max-width: 40.4375em) {
+	.links {
+		justify-content: space-between;
+	}
+}
+@media (max-width:42.75rem) {
+	.links {
+		gap: 3.5rem;
+	}
+}
 @media (max-width: 72.625em) {
 	.shop-menu,
 	.help {
@@ -134,10 +144,9 @@
 .footer-content .footer-nav {
 	display: flex;
 	justify-content: space-between;
-	padding: 5rem 2.5rem;
-	flex-wrap: wrap;
+	padding: 6rem 2.5rem;
 }
-@media (max-width: 50.4375em) {
+@media (max-width: 40.4375em) {
 	.footer-content .footer-nav {
 		flex-direction: column;
 		width: 100%;
@@ -166,7 +175,15 @@
 .footer-content .footer-nav ul li:not(:last-child) .footer-link {
 	margin-bottom: 0.5rem;
 }
-
+.newsletter {
+	width: 30%;
+}
+@media (max-width: 40.4375em) {
+	.newsletter {
+		width: 100%;
+		margin: 0 auto;
+	}
+}
 .newsletter form input {
 	width: 100%;
 	padding: 0.6rem;

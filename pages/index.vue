@@ -135,7 +135,6 @@ const tabs = ref([
 	{ text: "New Arrival", isActive: false },
 ]);
 const isActive = ref(true);
-const IsFavourite = ref(true);
 const handleTabs = (index: number) => {
 	tabs.value[index].isActive = true;
 	isActive.value = false;
@@ -535,27 +534,35 @@ h2 {
 }
 
 .hero-img {
-	background: linear-gradient(#0000002d 20%, rgba(22, 223, 89, 0) 250%),
-		url("~/assets/images/hero-img.jpg");
+	background: linear-gradient(
+			rgba(13, 20, 39, 0.377) 60%,
+			rgba(255, 255, 255, 0)
+		),
+		url("~/assets/images/hero-img.webp");
 	width: 100%;
-	height: 85vh;
+	min-height: 100vh;
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: 0% 90%;
 	color: white;
 	isolation: isolate;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
-@media (max-width: 37.5em) {
+@media (max-width: 30.125em) {
 	.hero-img {
-		background: linear-gradient(#00000067 20%, rgba(22, 223, 89, 0) 250%),
-			url("~/assets/images/hero-img.jpg");
-		width: 100%;
-		height: 85vh;
-		background-repeat: no-repeat;
-		background-size: cover;
-		background-position: 0% 90%;
-		color: white;
-		isolation: isolate;
+		background-position: 15% 90%;
+	}
+}
+@media (max-width: 25.125em) {
+	.hero-img {
+		background-position: 20% 90%;
+	}
+}
+@media (max-width: 21.8125em) {
+	.hero-img {
+		background-position: 23% 90%;
 	}
 }
 .hero-text-holder {
@@ -589,20 +596,6 @@ h2 {
 	}
 }
 
-h1::after {
-	content: "";
-	position: absolute;
-	top: 0;
-	left: 50%;
-	height: 2rem;
-	background-color: rgba(0, 0, 0, 0.6);
-	height: 100%;
-	width: 5%;
-	z-index: -1;
-	animation: side-reveal 1.2s cubic-bezier(0.5, 0, 0.175, 1) 0.7s forwards;
-	opacity: 0;
-	transform: skewX(-20deg) translate(-50%, 0);
-}
 @media (max-width: 37.5em) {
 	h1::after {
 		display: none;

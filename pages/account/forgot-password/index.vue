@@ -17,7 +17,6 @@
 
 			<button class="login-button" type="submit">Send</button>
 		</form>
-		<AccountImage />
 	</div>
 </template>
 
@@ -40,8 +39,9 @@
 	justify-content: space-between;
 	max-width: 105rem;
 	margin: 0 auto;
-	width: 100%;
-	min-height: calc(100vh - 59px);
+	align-items: center;
+	justify-content: center;
+	min-height: calc(100vh - 58px);
 }
 @media ((max-width: 48.25em)  or (orientation: portrait)) {
 	.account-wrapper {
@@ -56,19 +56,15 @@ form {
 	align-items: center;
 	justify-content: center;
 }
-@media (max-width: 58.5625rem) {
+@media (max-width: 34.9375em) {
 	form {
-		padding: 0 2rem;
-	}
-}
-@media ((max-width: 48.25em)  or (orientation: portrait)) {
-	form {
-		flex-basis: 100%;
+		width: 100%;
+		padding-inline: 1.25rem;
 	}
 }
 @media (max-width: 28.625rem) {
 	form {
-		padding-inline: 1.25rem;
+		padding-inline: 1rem;
 	}
 }
 form label {
@@ -77,9 +73,9 @@ form label {
 	display: block;
 }
 form input {
-	padding: 0.75rem 1rem;
+	padding: 0.65rem 1rem;
 	width: 100%;
-	margin-bottom: 2rem;
+	margin-bottom: 1.5rem;
 	border: 1px solid rgb(73, 73, 73);
 }
 form input:focus {

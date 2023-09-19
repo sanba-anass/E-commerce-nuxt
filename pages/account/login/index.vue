@@ -30,18 +30,21 @@
 				</NuxtLink>
 			</div>
 		</form>
-		<AccountImage />
 	</div>
 </template>
 
 <style scoped>
+h2 {
+	margin-bottom: 1rem;
+}
 .account-wrapper {
 	display: flex;
-	justify-content: space-between;
 	max-width: 105rem;
 	margin: 0 auto;
 	width: 100%;
-	min-height: 110vh;
+	align-items: center;
+	justify-content: center;
+	min-height: calc(100vh - 58px);
 }
 @media ((max-width: 48.25em)  or (orientation: portrait)) {
 	.account-wrapper {
@@ -52,26 +55,20 @@
 form {
 	display: flex;
 	flex-direction: column;
-	padding: 0 4rem;
 	align-items: center;
 	justify-content: center;
-	flex-basis: 50%;
-	align-self: center;
+	width: 500px;
 }
-@media (max-width: 58.5625rem) {
+@media (max-width: 34.9375em) {
 	form {
-		padding: 0 2rem;
-	}
-}
-@media ((max-width: 48.25em)  or (orientation: portrait)) {
-	form {
-		flex-basis: 100%;
-	}
-}
+		width: 100%;
+		padding-inline: 1.25rem;
 
+	}
+}
 @media (max-width: 28.625rem) {
 	form {
-		padding-inline: 1.25rem;
+		padding-inline: 1rem;
 	}
 }
 form label {
@@ -80,9 +77,9 @@ form label {
 	display: block;
 }
 form input {
-	padding: 0.75rem 1rem;
+	padding: 0.65rem 1rem;
 	width: 100%;
-	margin-bottom: 2rem;
+	margin-bottom: 1.5rem;
 	border: 1px solid rgb(73, 73, 73);
 }
 form input:focus {
@@ -113,6 +110,7 @@ form button {
 	gap: 0.5rem;
 	background: 0;
 	border: 1px solid black;
+	padding: 0.75rem 0;
 }
 
 form .checkbox {
@@ -125,6 +123,11 @@ form .checkbox label {
 	margin: 0;
 	user-select: none;
 }
+@media(max-width:25em){
+	 label{
+		font-size: 0.9rem;
+	}
+}
 form .checkbox input {
 	margin: 0;
 	width: 1.35rem;
@@ -136,12 +139,17 @@ form .wrapper {
 	justify-content: space-between;
 	width: 100%;
 	margin-bottom: 2rem;
-	gap: 1rem;
+	gap: 0.5rem;
 }
 form .link {
 	text-decoration: underline;
 	font-weight: 700;
 	cursor: pointer;
+}
+@media(max-width:25em){
+	form .link{
+		font-size: 0.9rem;
+	}
 }
 .create-account-link span {
 	margin-right: 0.25rem;

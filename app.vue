@@ -1,19 +1,11 @@
 <template>
-	<div>
-		<NuxtLayout>
-			<NavBar />
-			<NuxtPage />
-			<Footer />
-		</NuxtLayout>
-	</div>
+	<NuxtLayout>
+		<NavBar />
+		<NuxtPage />
+		<Footer />
+	</NuxtLayout>
 </template>
-<script setup>
-onBeforeMount(() => {
-	if (process.client && window) {
-		window.history.scrollRestoration = "auto";
-	}
-});
-</script>
+<script setup></script>
 <style>
 * {
 	padding: 0;
@@ -24,6 +16,7 @@ onBeforeMount(() => {
 body {
 	font-family: "Nunito Sans", sans-serif;
 }
+
 a {
 	color: black;
 }
