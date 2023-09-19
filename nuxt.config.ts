@@ -19,7 +19,7 @@ export default defineNuxtConfig({
 			},
 		],
 	],
-	css: ["@splidejs/vue-splide/css/core", "@splidejs/vue-splide/css"],
+	
 
 	googleFonts: {
 		preload: true,
