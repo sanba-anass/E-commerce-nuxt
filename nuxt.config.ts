@@ -22,7 +22,7 @@ export default defineNuxtConfig({
 	
 
 	googleFonts: {
-		preload: true,
+		display: 'swap'
 	},
 	routeRules: {
 		"/": { prerender: true },
