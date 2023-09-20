@@ -19,10 +19,10 @@ export default defineNuxtConfig({
 			},
 		],
 	],
-	
 
 	googleFonts: {
-		display: 'swap'
+		preload: true,
+		download: true,
 	},
 	routeRules: {
 		"/": { prerender: true },

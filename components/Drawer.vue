@@ -218,12 +218,15 @@ const catigories = ref(false);
 	z-index: 999999999;
 	transition: 0.5s transform;
 	overflow: auto;
-	padding: 2rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 }
 
 .drawer nav {
 	display: flex;
 	flex-direction: column;
+	padding: 2rem;
 }
 .drawer nav ul li {
 	width: 100%;
@@ -290,8 +293,6 @@ const catigories = ref(false);
 	align-items: center;
 	gap: 2rem;
 	padding: 1rem;
-	position: absolute;
-	bottom: calc(100vh - 58px) - 58px;
 	left: 0;
 	right: 0;
 	justify-content: center;
@@ -299,10 +300,6 @@ const catigories = ref(false);
 	background-color: #1c1b1b;
 	margin-top: auto;
 }
-@media (min-height: 35.625rem) {
-	.social-links {
-		bottom: 0;
-	}
-}
-/* 768 x 1024 */
+
+/* 635 x 680 */
 </style>

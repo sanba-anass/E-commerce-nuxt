@@ -8,7 +8,7 @@
 
 			<label for="password">Password</label>
 
-			<input type="password" name="password" id="password" />
+			<input autocomplete="on" type="password" name="password" id="password" />
 			<button class="login-button" type="submit">Login</button>
 			<div class="wrapper">
 				<div class="checkbox">

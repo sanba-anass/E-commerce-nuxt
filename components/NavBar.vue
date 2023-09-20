@@ -1,17 +1,19 @@
 <template>
-	<ClientOnly>
-		<Teleport class="tp" to="body">
-			<Drawer :class="{ isOpen: isOpen }" />
-			<div @click="isOpen = false" v-if="isOpen" class="overlay"></div>
-		</Teleport>
-	</ClientOnly>
+	<Teleport class="tp" to="body">
+		<Drawer :class="{ isOpen: isOpen }" />
+		<div @click="overlayClose" v-if="isOpen" class="overlay"></div>
+	</Teleport>
 	<nav @mouseleave="isVisible = false">
 		<button @click="toggleDrawer" class="menu-button">
 			<MenuIcon :isOpen="isOpen" :class="{ open: isOpen }" />
 		</button>
 
 		<ul>
-			<li><NuxtLink to="/" class="nav-link">home</NuxtLink></li>
+			<li>
+				<NuxtLink @mouseenter="isVisible = false" to="/" class="nav-link"
+					>home</NuxtLink
+				>
+			</li>
 			<li>
 				<NuxtLink
 					@mouseenter="
@@ -32,24 +34,42 @@
 					>collections</NuxtLink
 				>
 			</li>
-			<li><NuxtLink class="nav-link">about</NuxtLink></li>
-			<li><NuxtLink class="nav-link">journal</NuxtLink></li>
+			<li>
+				<NuxtLink @mouseenter="isVisible = false" class="nav-link"
+					>about</NuxtLink
+				>
+			</li>
+			<li>
+				<NuxtLink @mouseenter="isVisible = false" class="nav-link"
+					>journal</NuxtLink
+				>
+			</li>
 		</ul>
-		<NuxtLink to="/" class="logo nav-link"
+		<NuxtLink @click="isVisible = false" to="/" class="logo nav-link"
 			>d<span>r</span>ess do<span>w</span>n
 		</NuxtLink>
 		<div class="nav-icon-links">
-			<NuxtLink><HeartIcon /></NuxtLink>
-			<NuxtLink to="/account/login"><AccountIcon /></NuxtLink>
-			<NuxtLink><SearchIcon /></NuxtLink>
-			<NuxtLink><CartIcon /></NuxtLink>
+			<NuxtLink @click="isVisible = false" to="/wishlist"
+				><HeartIcon
+			/></NuxtLink>
+			<NuxtLink @click="isVisible = false" to="/account/login"
+				><AccountIcon
+			/></NuxtLink>
+			<NuxtLink @click="isVisible = false"><SearchIcon /></NuxtLink>
+			<NuxtLink
+				@click="
+					openCartDrawer();
+					isVisible = false;
+				"
+				><CartIcon
+			/></NuxtLink>
 		</div>
 	</nav>
 	<BigMenu
 		class="menu"
 		@mouseenter="isVisible = true"
 		@mouseleave="
-			($event) => {
+			($event:MouseEvent) => {
 				if ($event.clientY < 100) {
 					return;
 				}
@@ -93,9 +113,7 @@
 		</div>
 		<figure v-if="!isCollection" class="img">
 			<div class="inner-img">
-				<NuxtLink
-					><NuxtImg  src="images/menu-img3.webp"
-				/></NuxtLink>
+				<NuxtLink><NuxtImg src="images/menu-img3.webp" /></NuxtLink>
 			</div>
 			<figcaption>
 				shop the new summer 2023
@@ -105,17 +123,13 @@
 		<div class="collections" v-else>
 			<figure>
 				<div class="img-collection">
-					<NuxtLink
-						><NuxtImg src="images/img-collection1.webp"
-					/></NuxtLink>
+					<NuxtLink><NuxtImg src="images/img-collection1.webp" /></NuxtLink>
 				</div>
 				<figcaption>fall winnter</figcaption>
 			</figure>
 			<figure>
 				<div class="img-collection">
-					<NuxtLink
-						><NuxtImg src="images/img-collection2.webp"
-					/></NuxtLink>
+					<NuxtLink><NuxtImg src="images/img-collection2.webp" /></NuxtLink>
 				</div>
 				<figcaption>spring summmer 2023</figcaption>
 			</figure>
@@ -123,8 +137,28 @@
 	</BigMenu>
 </template>
 
-<script setup>
+<script setup lang="ts">
+const { openCartDrawer } = useOpenCartDrawer();
+
 const isLoadingPage = ref(true);
+function overlayClose(mediaQuery: MediaQueryList) {
+	document.body.style.overflow = "visible";
+	isOpen.value = false;
+	if (mediaQuery.matches) {
+		console.log("matches");
+		document.body.style.overflow = "visible";
+		isOpen.value = false;
+	}
+}
+const matches = ref(false);
+if (process.client) {
+	const mediaQuery = window.matchMedia("(min-width: 76.625rem)");
+
+	mediaQuery.addEventListener("change", () => {
+		overlayClose(mediaQuery);
+	});
+}
+
 onBeforeMount(() => {
 	isLoadingPage.value = false;
 });
@@ -138,25 +172,20 @@ const toggleDrawer = () => {
 </script>
 
 <style scoped>
-[v-cloak] {
-	display: none;
-}
-
 .tp {
 	z-index: 9999999;
 }
 
 .overlay {
-	position: fixed; /* Sit on top of the page content */
-	width: 100%; /* Full width (cover the whole page) */
-	height: 100%; /* Full height (cover the whole page) */
+	position: fixed;
+	width: 100%;
+	height: 100%;
 	top: 0;
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background-color: rgba(0, 0, 0, 0.295); /* Black background with opacity */
-	z-index: 1; /* Specify a stack order in case you're using a different order for other elements */
-	/* Add a pointer on hover */
+	background-color: rgba(0, 0, 0, 0.295);
+	z-index: 1;
 }
 .isOpen {
 	transform: translateX(0%);
@@ -172,7 +201,7 @@ const toggleDrawer = () => {
 }
 @keyframes fade-reveal-reverse {
 	0% {
-		height: 65vh;
+		height: 28.125rem;
 		opacity: 1;
 	}
 	100% {
@@ -282,7 +311,7 @@ figcaption {
 		opacity: 0;
 	}
 	100% {
-		height: 65vh;
+		height: 28.125rem;
 		opacity: 1;
 	}
 }
@@ -367,7 +396,7 @@ ul li {
 	align-items: center;
 	justify-content: center;
 }
-@media (max-width: 76.625rem) {
+@media (max-width: 76.625em) {
 	ul li {
 		display: none;
 	}

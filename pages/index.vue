@@ -98,9 +98,12 @@
 				</div>
 			</section>
 		</div>
+	
 	</div>
 </template>
+
 <script setup lang="ts">
+
 const selected = ref("Featured");
 const categoryItems = [
 	{
@@ -285,6 +288,17 @@ const sliderImages3 = [
 ];
 </script>
 <style scoped>
+.overlay {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.295);
+	z-index: 1;
+}
 section {
 	display: flex;
 	align-items: center;
@@ -311,7 +325,7 @@ section .section-images {
 section .section-images .section-img img {
 	width: 400px;
 }
-video{
+video {
 	max-width: 100%;
 	display: block;
 }

@@ -3,7 +3,7 @@
 		<form>
 			<div class="link-wrapper">
 				<NuxtLink to="/account/login" class="back-link">
-					<div class="arrow-icon"><ArrowIcon /><span> back</span></div>
+					<div class="arrow-icon"><ArrowIcon /><span> Back to login</span></div>
 				</NuxtLink>
 			</div>
 			<h2>Forgot your password?</h2>
@@ -15,7 +15,7 @@
 
 			<input type="email" name="email" id="email" />
 
-			<button class="login-button" type="submit">Send</button>
+			<button class="login-button" type="submit">Recover</button>
 		</form>
 	</div>
 </template>
@@ -31,7 +31,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 0.25rem;
+	gap: 0.75rem;
 	padding: 0.75rem 1rem;
 }
 .account-wrapper {
