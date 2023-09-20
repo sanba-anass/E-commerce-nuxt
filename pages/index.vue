@@ -556,6 +556,7 @@ h2 {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	background-attachment: fixed;
 }
 @media (max-width: 30.125em) {
 	.hero-img {
