@@ -1,4 +1,3 @@
-import { Head } from '../.nuxt/components';
 <template>
 	<div class="drawer">
 		<nav>
@@ -115,7 +114,7 @@ import { Head } from '../.nuxt/components';
 				</li>
 
 				<li><NuxtLink class="nav-link">about</NuxtLink></li>
-				<li><NuxtLink class="nav-link">journal</NuxtLink></li>
+				<li><NuxtLink to="/blogs" class="nav-link">blogs</NuxtLink></li>
 			</ul>
 			<ul class="secondary-links">
 				<li>

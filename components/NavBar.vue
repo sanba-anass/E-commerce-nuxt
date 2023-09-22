@@ -43,8 +43,8 @@ useOpenCartDrawer } from '../composables/useOpenCartDrawer';
 				>
 			</li>
 			<li>
-				<NuxtLink @mouseenter="isVisible = false" class="nav-link"
-					>journal</NuxtLink
+				<NuxtLink to="/blogs" @mouseenter="isVisible = false" class="nav-link"
+					>blogs</NuxtLink
 				>
 			</li>
 		</ul>

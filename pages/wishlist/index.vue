@@ -63,7 +63,6 @@
 	margin: 0 auto;
 	width: 60%;
 	text-align: center;
-	height: 100vh;
 }
 
 h2 {
