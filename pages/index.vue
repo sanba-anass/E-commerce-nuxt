@@ -59,11 +59,11 @@
 				</div>
 				<div class="section-images">
 					<div class="section-img">
-						<NuxtImg src="/images/showcase1-img.webp" />
+						<NuxtImg loading="lazy" src="/images/showcase1-img.webp" />
 					</div>
 
 					<div class="section-img">
-						<NuxtImg src="/images/showcase2-img.webp" />
+						<NuxtImg loading="lazy" src="/images/showcase2-img.webp" />
 					</div>
 				</div>
 			</section>
