@@ -1,6 +1,17 @@
+import { Head } from '../.nuxt/components';
 <template>
 	<div class="drawer">
 		<nav>
+			<div class="input-wrapper">
+				<input
+					class="search-input"
+					type="text"
+					name=""
+					id=""
+					placeholder="Search for..."
+				/>
+				<SearchIcon class="search-icon" />
+			</div>
 			<ul>
 				<li>
 					<NuxtLink to="/" class="nav-link">home</NuxtLink>
@@ -133,6 +144,31 @@ const catigories = ref(false);
 </script>
 
 <style scoped>
+.input-wrapper {
+	position: relative;
+}
+.search-input {
+	margin-bottom: 2rem;
+	background-color: #3d3d3d;
+	border: 0;
+	padding: 0.5rem;
+	width: 100%;
+	color: white;
+}
+.search-icon {
+	position: absolute;
+	right: 0.5rem;
+	top: 0.5rem;
+	width: 1rem;
+	height: 1rem;
+	color: white;
+}
+.search-input:focus {
+	outline: none;
+}
+.search-input::placeholder {
+	color: rgb(160, 160, 160);
+}
 .wrapper {
 	padding-left: 2rem;
 	border-left: 1px solid rgb(90, 90, 90);

@@ -1,7 +1,10 @@
+import type { NuxtIslandContext from 'nuxt/dist/core/runtime/nitro/renderer';
+import { SearchCateroryItem } from '../.nuxt/components'; import {
+useOpenCartDrawer } from '../composables/useOpenCartDrawer';
 <template>
 	<Teleport class="tp" to="body">
 		<Drawer :class="{ isOpen: isOpen }" />
-		<div @click="overlayClose" v-if="isOpen" class="overlay"></div>
+		<div @click="overlayClose(null)" v-if="isOpen" class="overlay"></div>
 	</Teleport>
 	<nav @mouseleave="isVisible = false">
 		<button @click="toggleDrawer" class="menu-button">
@@ -55,7 +58,14 @@
 			<NuxtLink @click="isVisible = false" to="/account/login"
 				><AccountIcon
 			/></NuxtLink>
-			<NuxtLink @click="isVisible = false"><SearchIcon /></NuxtLink>
+			<NuxtLink
+				class="nav-icon-search"
+				@click="
+					isVisible = false;
+					showSideBar();
+				"
+				><SearchIcon
+			/></NuxtLink>
 			<NuxtLink
 				@click="
 					openCartDrawer();
@@ -73,78 +83,170 @@
 				if ($event.clientY < 100) {
 					return;
 				}
-
+				
 				isVisible = false;
 			}
-		"
+			"
 		:class="{ isVisible, animation: !isVisible && !isLoadingPage }"
 	>
-		<div v-if="!isCollection" class="none" :class="{ isVisible }">
-			<ul class="discover-Links">
-				<li>Discover</li>
-				<li><NuxtLink>All Products</NuxtLink></li>
-				<li><NuxtLink>New in</NuxtLink></li>
-				<li><NuxtLink>Best Sellers</NuxtLink></li>
-				<li><NuxtLink>Last Piece</NuxtLink></li>
-			</ul>
-			<div class="Categories">
-				<ul>
-					<li>Categories</li>
-					<li><NuxtLink>Coats & Long Jackets</NuxtLink></li>
-					<li><NuxtLink>Dresses</NuxtLink></li>
-					<li><NuxtLink>Blazres</NuxtLink></li>
-					<li><NuxtLink>Tops</NuxtLink></li>
-					<li><NuxtLink>Pants</NuxtLink></li>
+		<div class="container" :class="{ isVisible }">
+			<div class="links" v-if="!isCollection">
+				<ul class="discover-Links">
+					<li>Discover</li>
+					<li><NuxtLink>All Products</NuxtLink></li>
+					<li><NuxtLink>New in</NuxtLink></li>
+					<li><NuxtLink>Best Sellers</NuxtLink></li>
+					<li><NuxtLink>Last Piece</NuxtLink></li>
 				</ul>
-				<ul class="additional">
-					<li class="hide">hidden</li>
-					<li><NuxtLink>Skirts</NuxtLink></li>
-					<li><NuxtLink>Accessories</NuxtLink></li>
-					<li><NuxtLink>Kintwear</NuxtLink></li>
-					<li><NuxtLink>Shorts</NuxtLink></li>
-					<li><NuxtLink>Swimwear</NuxtLink></li>
+				<div class="Categories">
+					<ul>
+						<li>Categories</li>
+						<li><NuxtLink>Coats & Long Jackets</NuxtLink></li>
+						<li><NuxtLink>Dresses</NuxtLink></li>
+						<li><NuxtLink>Blazres</NuxtLink></li>
+						<li><NuxtLink>Tops</NuxtLink></li>
+						<li><NuxtLink>Pants</NuxtLink></li>
+					</ul>
+					<ul class="additional">
+						<li class="hide">hidden</li>
+						<li><NuxtLink>Skirts</NuxtLink></li>
+						<li><NuxtLink>Accessories</NuxtLink></li>
+						<li><NuxtLink>Kintwear</NuxtLink></li>
+						<li><NuxtLink>Shorts</NuxtLink></li>
+						<li><NuxtLink>Swimwear</NuxtLink></li>
+					</ul>
+				</div>
+				<ul class="Collections">
+					<li>collections</li>
+					<li><NuxtLink>Fall Winter 2023</NuxtLink></li>
+					<li><NuxtLink>Spring Summer 2023</NuxtLink></li>
 				</ul>
 			</div>
-			<ul class="Collections">
-				<li>collections</li>
-				<li><NuxtLink>Fall Winter 2023</NuxtLink></li>
-				<li><NuxtLink>Spring Summer 2023</NuxtLink></li>
-			</ul>
-		</div>
-		<figure v-if="!isCollection" class="img">
-			<div class="inner-img">
-				<NuxtLink><NuxtImg src="images/menu-img3.webp" /></NuxtLink>
+			<figure v-if="!isCollection" class="img">
+				<div class="inner-img">
+					<NuxtLink><NuxtImg loading="lazy" src="images/menu-img3.webp" /></NuxtLink>
+				</div>
+				<figcaption>
+					shop the new summer 2023
+					<div>collection</div>
+				</figcaption>
+			</figure>
+			<div class="collections" v-else>
+				<figure>
+					<div class="img-collection">
+						<NuxtLink
+							><NuxtImg loading="lazy" src="images/img-collection1.webp"
+						/></NuxtLink>
+					</div>
+					<figcaption>fall winnter</figcaption>
+				</figure>
+				<figure>
+					<div class="img-collection">
+						<NuxtLink
+							><NuxtImg loading="lazy" src="images/img-collection2.webp"
+						/></NuxtLink>
+					</div>
+					<figcaption>spring summmer 2023</figcaption>
+				</figure>
 			</div>
-			<figcaption>
-				shop the new summer 2023
-				<div>collection</div>
-			</figcaption>
-		</figure>
-		<div class="collections" v-else>
-			<figure>
-				<div class="img-collection">
-					<NuxtLink><NuxtImg src="images/img-collection1.webp" /></NuxtLink>
-				</div>
-				<figcaption>fall winnter</figcaption>
-			</figure>
-			<figure>
-				<div class="img-collection">
-					<NuxtLink><NuxtImg src="images/img-collection2.webp" /></NuxtLink>
-				</div>
-				<figcaption>spring summmer 2023</figcaption>
-			</figure>
 		</div>
 	</BigMenu>
+	<Teleport to="body">
+		<div
+			:class="{ isVisibleSearchMenu: isVisibleSearchMenu }"
+			class="search-menu"
+		>
+			<button
+				@click="
+					isVisibleSearchMenu = false;
+					hideSideBar();
+				"
+				class="close-button"
+			>
+				<CloseIcon />
+			</button>
+
+			<div class="content">
+				<p class="title">What Are You Looking For?</p>
+				<div class="input">
+					<input type="text" name="" id="" placeholder="Search for..." />
+					<SearchIcon />
+				</div>
+				<div class="trending-searches">
+					<div class="title">trending searches:</div>
+					<div class="tags">
+						<button>Shirt</button>
+						<button>Cotton</button>
+						<button>Square</button>
+						<button>Waist</button>
+						<button>Short</button>
+					</div>
+				</div>
+				<p class="title">Popular Categories</p>
+			</div>
+			<div class="searchCateroryItems">
+				<SearchCateroryItem
+					v-for="item in searchCateroryItems"
+					:title="item.title"
+					:amount="item.amount"
+					:ImageUrl="item.imageUrl"
+				/>
+			</div>
+		</div>
+	</Teleport>
+
+	<Teleport to="body">
+		<div
+			@click="hideSideBar"
+			v-if="isVisibleSearchMenu"
+			class="overlay-search"
+		></div>
+	</Teleport>
 </template>
 
 <script setup lang="ts">
+const isVisibleSearchMenu = ref(false);
+function showSideBar() {
+	isVisibleSearchMenu.value = true;
+}
+function hideSideBar() {
+	isVisibleSearchMenu.value = false;
+}
+const searchCateroryItems = [
+	{
+		title: "accessorie",
+		amount: 4,
+		imageUrl: "images/search-cat1.jpeg",
+	},
+	{
+		title: "clothings",
+		amount: 11,
+		imageUrl: "images/search-cat2.jpeg",
+	},
+	{
+		title: "footwear",
+		amount: 6,
+		imageUrl: "images/search-cat3.jpeg",
+	},
+	{
+		title: "handbags",
+		amount: 5,
+		imageUrl: "images/search-cat4.jpeg",
+	},
+	{
+		title: "jewellery",
+		amount: 4,
+		imageUrl: "images/search-cat5.jpeg",
+	},
+];
+
 const { openCartDrawer } = useOpenCartDrawer();
 
 const isLoadingPage = ref(true);
-function overlayClose(mediaQuery: MediaQueryList) {
+function overlayClose(mediaQuery: MediaQueryList | null) {
 	document.body.style.overflow = "visible";
 	isOpen.value = false;
-	if (mediaQuery.matches) {
+	if (mediaQuery?.matches) {
 		console.log("matches");
 		document.body.style.overflow = "visible";
 		isOpen.value = false;
@@ -172,6 +274,114 @@ const toggleDrawer = () => {
 </script>
 
 <style scoped>
+.container {
+	display: flex;
+	max-width: 105rem;
+	margin: 1rem auto;
+	height: auto !important;
+}
+.links {
+	display: flex;
+}
+.searchCateroryItems {
+	display: flex;
+	justify-content: center;
+	gap: 2rem;
+	margin-bottom: 3rem;
+}
+.search-menu {
+	background-color: rgb(255, 255, 255);
+	width: 100%;
+	position: absolute;
+	top: 0;
+	z-index: 99999;
+	pointer-events: none;
+	position: fixed;
+	opacity: 0;
+	transform: translateY(-100%);
+	transition: 0.5s opacity, 0.5s transform;
+	border-bottom: 1px solid rgb(226, 226, 226);
+}
+
+@media (max-width: 66.25em) {
+	.search-menu {
+		display: none;
+	}
+}
+.isVisibleSearchMenu {
+	opacity: 1;
+	pointer-events: all;
+	transform: translateY(0%);
+}
+
+.close-button {
+	position: absolute;
+	right: 1.5rem;
+	top: 1.25rem;
+	background: 0;
+	border: 0;
+	transition: 0.3s;
+	transform: scale(1.5);
+	transition-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+.close-button:hover {
+	transform: scale(1.5) rotate(90deg);
+}
+
+.search-menu .content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.search-menu .title {
+	text-align: center;
+	margin-top: 3.5rem;
+	margin-bottom: 2rem;
+	font-weight: 600;
+	font-size: 0.85rem;
+}
+.search-menu .content input {
+	border: 0;
+	width: 100%;
+	padding: 0.5rem;
+	font-size: 1rem;
+}
+.search-menu .content .input {
+	border-bottom: 1px solid rgb(209, 209, 209);
+	width: 55%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-right: 0.75rem;
+	margin-bottom: 3rem;
+}
+.search-menu .content input:focus {
+	outline: none;
+}
+.search-menu .content .trending-searches {
+	display: flex;
+	align-items: center;
+}
+.search-menu .content .trending-searches .title {
+	font-size: 0.95rem;
+	margin: 0;
+	text-transform: uppercase;
+	font-weight: 500;
+}
+.trending-searches .tags button {
+	background: 0;
+	border: 0;
+	margin-left: 1rem;
+	background-color: rgb(243, 243, 243);
+	font-size: 0.85rem;
+	padding: 0.2rem 0.7rem;
+	cursor: pointer;
+	transition: all 0.3s;
+}
+.trending-searches .tags button:hover {
+	background-color: #e6733e;
+	color: white;
+}
 .tp {
 	z-index: 9999999;
 }
@@ -184,8 +394,24 @@ const toggleDrawer = () => {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background-color: rgba(0, 0, 0, 0.295);
+	background-color: rgba(0, 0, 0, 0.356);
 	z-index: 1;
+}
+.overlay-search {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.35);
+	z-index: 99990;
+}
+@media (max-width: 66.25em) {
+	.overlay-search {
+		display: none;
+	}
 }
 .isOpen {
 	transform: translateX(0%);
@@ -194,7 +420,6 @@ const toggleDrawer = () => {
 	opacity: 1;
 	z-index: 999;
 	height: 65vh;
-	display: flex;
 	color: rgb(20, 20, 20);
 	animation: fade-reveal-reverse 0.5s forwards;
 	pointer-events: none;
@@ -239,6 +464,7 @@ const toggleDrawer = () => {
 	top: 0;
 	border-bottom: 1px solid rgb(223, 223, 223);
 }
+
 figcaption {
 	font-size: 0.85rem;
 	margin-top: 1rem;
@@ -267,7 +493,7 @@ figcaption {
 .additional .hide {
 	opacity: 0;
 }
-.none ul li a:hover {
+.container ul li a:hover {
 	color: #e6733e;
 }
 .Categories {
@@ -278,21 +504,19 @@ figcaption {
 }
 .none {
 	display: none;
-	align-items: start;
-	height: auto !important;
 }
-.none ul li:first-child {
+.container ul li:first-child {
 	text-transform: uppercase;
 	color: rgb(163, 163, 163);
 	font-family: "Lato" sans-serif;
 	font-weight: 400;
 	margin-bottom: 1.5rem;
 }
-.none ul li {
+.container ul li {
 	display: block;
 	font-size: 0.9rem;
 }
-.none ul li:not(:last-child) {
+.container ul li:not(:last-child) {
 	margin-bottom: 1rem;
 }
 
@@ -300,7 +524,6 @@ figcaption {
 	opacity: 1;
 	z-index: 999;
 	height: 0;
-	display: flex;
 	color: rgb(20, 20, 20);
 	animation: fade-reveal 0.5s forwards;
 }
@@ -449,6 +672,11 @@ nav .logo {
 	100% {
 		transform: translate(0, 0);
 		opacity: 1;
+	}
+}
+@media (max-width: 66.25em) {
+	.nav-icon-search {
+		display: none;
 	}
 }
 

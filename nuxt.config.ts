@@ -1,5 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+	components: [
+		{ path: "~/components/icons", pathPrefix: false },
+		"~/components",
+	],
 	modules: [
 		"@nuxt/image",
 		[
@@ -19,7 +23,6 @@ export default defineNuxtConfig({
 			},
 		],
 	],
-
 	googleFonts: {
 		preload: true,
 		download: true,

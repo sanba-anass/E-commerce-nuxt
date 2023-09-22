@@ -74,11 +74,11 @@
 				</div>
 				<div class="section-images">
 					<div class="section-img">
-						<NuxtImg src="/images/showcase3-img.webp" />
+						<NuxtImg loading="lazy" src="/images/showcase3-img.webp" />
 					</div>
 
 					<div class="section-img">
-						<NuxtImg src="/images/showcase4-img.webp" />
+						<NuxtImg loading="lazy" src="/images/showcase4-img.webp" />
 					</div>
 				</div>
 			</section>
@@ -93,17 +93,15 @@
 					</div>
 
 					<div class="section-img">
-						<NuxtImg src="/images/showcase6-img.webp" />
+						<NuxtImg loading="lazy" src="/images/showcase6-img.webp" />
 					</div>
 				</div>
 			</section>
 		</div>
-	
 	</div>
 </template>
 
 <script setup lang="ts">
-
 const selected = ref("Featured");
 const categoryItems = [
 	{

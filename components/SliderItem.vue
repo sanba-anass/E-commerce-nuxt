@@ -2,7 +2,7 @@
 	<div class="slider-item">
 		<div @mouseleave="switchImage = false" @mouseenter="switchImage = true">
 			<div class="images">
-				<NuxtImg :format="'webp'" :src="!switchImage ? url1 : url2" />
+				<NuxtImg loading="lazy" :format="'webp'" :src="!switchImage ? url1 : url2" />
 				<div class="arrows">
 					<button @click="switchSliderItemImage" class="left-arrow">
 						<LeftArrow />
