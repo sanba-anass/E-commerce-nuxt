@@ -20,6 +20,7 @@
 		<section class="blog-content">
 			<article>
 				<NuxtImg
+					loading="lazy"
 					v-if="blogItems.at(blog).innerSections.section1?.img"
 					:src="blogItems.at(blog).innerSections.section1?.img"
 				/>
@@ -29,6 +30,7 @@
 			</article>
 			<article>
 				<NuxtImg
+					loading="lazy"
 					v-if="blogItems.at(blog).innerSections.section2?.img"
 					:src="blogItems.at(blog).innerSections.section2?.img"
 				/>
@@ -38,6 +40,7 @@
 			</article>
 			<article>
 				<NuxtImg
+					loading="lazy"
 					v-if="blogItems.at(blog).innerSections.section3?.img"
 					:src="blogItems.at(blog).innerSections.section3?.img"
 				/>
