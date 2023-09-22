@@ -1,4 +1,3 @@
-import { Title, BlogItem } from '../../.nuxt/components';
 <template>
 	<h1>Top Articles</h1>
 	<div class="blogs">
