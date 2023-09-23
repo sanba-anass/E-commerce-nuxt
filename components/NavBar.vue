@@ -1,6 +1,3 @@
-import type { NuxtIslandContext from 'nuxt/dist/core/runtime/nitro/renderer';
-import { SearchCateroryItem } from '../.nuxt/components'; import {
-useOpenCartDrawer } from '../composables/useOpenCartDrawer';
 <template>
 	<Teleport class="tp" to="body">
 		<Drawer :class="{ isOpen: isOpen }" />
@@ -133,8 +130,21 @@ useOpenCartDrawer } from '../composables/useOpenCartDrawer';
 				</div>
 				<ul class="Collections">
 					<li>collections</li>
-					<li><NuxtLink>Fall Winter 2023</NuxtLink></li>
-					<li><NuxtLink>Spring Summer 2023</NuxtLink></li>
+					<li>
+						<NuxtLink
+							:style="{ 'text-decoration': 'none' }"
+							@click="isVisible = false"
+							to="/collections/fall-winter-2023"
+							>Fall Winter 2023</NuxtLink
+						>
+					</li>
+					<li>
+						<NuxtLink
+							@click="isVisible = false"
+							to="/collections/spring-summer-2023"
+							>Spring Summer 2023</NuxtLink
+						>
+					</li>
 				</ul>
 			</div>
 			<figure v-if="!isCollection" class="img">
@@ -152,6 +162,8 @@ useOpenCartDrawer } from '../composables/useOpenCartDrawer';
 				<figure>
 					<div class="img-collection">
 						<NuxtLink
+							@click="isVisible = false"
+							to="/collections/fall-winter-2023"
 							><NuxtImg loading="lazy" src="images/img-collection1.webp"
 						/></NuxtLink>
 					</div>
@@ -160,6 +172,8 @@ useOpenCartDrawer } from '../composables/useOpenCartDrawer';
 				<figure>
 					<div class="img-collection">
 						<NuxtLink
+							@click="isVisible = false"
+							to="/collections/spring-summer-2023"
 							><NuxtImg loading="lazy" src="images/img-collection2.webp"
 						/></NuxtLink>
 					</div>
@@ -594,7 +608,7 @@ nav {
 	margin: 0 auto;
 	position: sticky;
 	top: 0;
-	z-index: 99;
+	z-index: 9999;
 	width: 100%;
 	border-bottom: 1px solid rgb(216, 216, 216);
 }
@@ -715,5 +729,8 @@ nav .logo {
 	.overlay {
 		display: none;
 	}
+}
+a{
+	text-decoration: none;
 }
 </style>

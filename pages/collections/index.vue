@@ -2,14 +2,18 @@
 	<div>
 		<h1>Collections</h1>
 		<section>
-			<div class="collection1">
-				<p>Collection</p>
-				<h3>Fall winter 2023</h3>
-			</div>
-			<div class="collection2">
-				<p>Collection</p>
-				<h3>Spring Summer 2023</h3>
-			</div>
+			<NuxtLink to="/collections/spring-summer-2023">
+				<div class="collection1">
+					<p>Collection</p>
+					<h3>Spring Summer 2023</h3>
+				</div>
+			</NuxtLink>
+			<NuxtLink to="/collections/fall-winter-2023">
+				<div class="collection2">
+					<p>Collection</p>
+					<h3>Fall winter 2023</h3>
+				</div>
+			</NuxtLink>
 		</section>
 	</div>
 </template>
@@ -17,6 +21,10 @@
 <script setup lang="ts"></script>
 
 <style scoped>
+a {
+	text-decoration: none;
+	display: block;
+}
 h1 {
 	text-align: center;
 	margin-block: 3rem;
@@ -30,7 +38,7 @@ section {
 	width: 80%;
 	margin: 0 auto;
 	gap: 2rem;
-    max-width: 105rem;
+	max-width: 105rem;
 }
 
 .collection1 {
@@ -51,6 +59,8 @@ section {
 	position: relative;
 	background-size: cover;
 	text-align: center;
+
+	height: 100%;
 }
 
 .collection2 {
@@ -70,6 +80,8 @@ section {
 	color: white;
 	background-size: cover;
 	text-align: center;
+	height: 100%;
+
 }
 
 p {
@@ -108,7 +120,7 @@ section > * {
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-        padding-inline: 0.5rem;
+		padding-inline: 0.5rem;
 	}
 	section > * {
 		width: 100%;

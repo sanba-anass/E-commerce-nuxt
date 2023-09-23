@@ -554,7 +554,8 @@ h2 {
 
 .hero-img {
 	background: linear-gradient(
-			rgba(13, 20, 39, 0.377) 60%,
+			to top,
+			rgba(0, 0, 0, 0.40),
 			rgba(255, 255, 255, 0)
 		),
 		url("~/assets/images/hero-img.webp");
@@ -562,7 +563,7 @@ h2 {
 	min-height: 100vh;
 	background-repeat: no-repeat;
 	background-size: cover;
-	background-position: 0% 90%;
+	background-position: center center;
 	color: white;
 	isolation: isolate;
 	display: flex;
