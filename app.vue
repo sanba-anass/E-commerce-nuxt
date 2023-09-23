@@ -15,8 +15,6 @@
 const { isOpen, closeCartDrawer } = useOpenCartDrawer();
 </script>
 <style>
-
-
 * {
 	padding: 0;
 	margin: 0;
@@ -24,9 +22,7 @@ const { isOpen, closeCartDrawer } = useOpenCartDrawer();
 	font-family: inherit;
 	font-display: swap !important;
 }
-#__nuxt {
-	height: 100vh !important;
-}
+
 body {
 	font-family: "Nunito Sans", sans-serif;
 }

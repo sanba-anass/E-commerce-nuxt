@@ -40,7 +40,7 @@ section {
 			rgba(4, 4, 4, 0.35),
 			rgba(54, 54, 54, 0.1)
 		),
-		url("images/collection1-img.webp");
+		url("~/assets/images/collection1-img.webp");
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -60,7 +60,7 @@ section {
 			rgba(4, 4, 4, 0.35),
 			rgba(54, 54, 54, 0.1)
 		),
-		url("images/collection2-img.webp");
+		url("~/assets/images/collection2-img.webp");
 	display: flex;
 	flex-direction: column;
 	align-items: center;

@@ -594,7 +594,7 @@ nav {
 	margin: 0 auto;
 	position: sticky;
 	top: 0;
-	z-index: 9999;
+	z-index: 99999;
 	width: 100%;
 	border-bottom: 1px solid rgb(216, 216, 216);
 }
