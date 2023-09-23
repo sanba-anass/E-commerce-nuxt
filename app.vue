@@ -15,12 +15,17 @@
 const { isOpen, closeCartDrawer } = useOpenCartDrawer();
 </script>
 <style>
+
+
 * {
 	padding: 0;
 	margin: 0;
 	box-sizing: border-box;
 	font-family: inherit;
 	font-display: swap !important;
+}
+#__nuxt {
+	height: 100vh !important;
 }
 body {
 	font-family: "Nunito Sans", sans-serif;
@@ -55,9 +60,8 @@ ul {
 	right: 0;
 	bottom: 0;
 	background-color: rgba(0, 0, 0, 0.295);
-	z-index:999999;
+	z-index: 999999;
 }
-
 
 @keyframes reveal {
 	0% {

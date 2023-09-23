@@ -309,6 +309,12 @@ if (blog !== -1) {
 </script>
 
 <style scoped>
+h1 {
+	text-align: center;
+	margin-block: 3rem;
+	font-weight: 500;
+	font-size: 1.75rem;
+}
 .blog-wrapper {
 	max-width: 105rem;
 	width: 90%;

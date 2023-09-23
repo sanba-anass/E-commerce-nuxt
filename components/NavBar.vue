@@ -13,12 +13,17 @@ useOpenCartDrawer } from '../composables/useOpenCartDrawer';
 
 		<ul>
 			<li>
-				<NuxtLink @mouseenter="isVisible = false" to="/" class="nav-link"
+				<NuxtLink
+					:active-class="'active-style'"
+					@mouseenter="isVisible = false"
+					to="/"
+					class="nav-link"
 					>home</NuxtLink
 				>
 			</li>
 			<li>
 				<NuxtLink
+					:active-class="'active-style'"
 					@mouseenter="
 						isVisible = true;
 						isCollection = false;
@@ -29,21 +34,31 @@ useOpenCartDrawer } from '../composables/useOpenCartDrawer';
 			</li>
 			<li>
 				<NuxtLink
+					:active-class="'active-style'"
 					@mouseenter="
 						isVisible = true;
 						isCollection = true;
 					"
 					class="nav-link"
+					to="/collections"
 					>collections</NuxtLink
 				>
 			</li>
 			<li>
-				<NuxtLink @mouseenter="isVisible = false" class="nav-link"
+				<NuxtLink
+					to="/about"
+					:active-class="'active-style'"
+					@mouseenter="isVisible = false"
+					class="nav-link"
 					>about</NuxtLink
 				>
 			</li>
 			<li>
-				<NuxtLink to="/blogs" @mouseenter="isVisible = false" class="nav-link"
+				<NuxtLink
+					:active-class="'active-style'"
+					to="/blogs"
+					@mouseenter="isVisible = false"
+					class="nav-link"
 					>blogs</NuxtLink
 				>
 			</li>
@@ -124,7 +139,9 @@ useOpenCartDrawer } from '../composables/useOpenCartDrawer';
 			</div>
 			<figure v-if="!isCollection" class="img">
 				<div class="inner-img">
-					<NuxtLink><NuxtImg loading="lazy" src="images/menu-img3.webp" /></NuxtLink>
+					<NuxtLink
+						><NuxtImg loading="lazy" src="images/menu-img3.webp"
+					/></NuxtLink>
 				</div>
 				<figcaption>
 					shop the new summer 2023
@@ -646,6 +663,9 @@ nav .nav-link:not(.logo.nav-link)::after {
 	transition: 0.3s width;
 }
 nav .nav-link:not(.logo.nav-link):hover::after {
+	width: 100%;
+}
+nav .nav-link:not(.logo.nav-link).active-style::after {
 	width: 100%;
 }
 

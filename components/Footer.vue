@@ -79,6 +79,11 @@
 <script setup lang="ts"></script>
 
 <style scoped>
+.footer {
+	max-width: 105rem;
+	margin: 0 auto;
+	margin-top:12rem;
+}
 .copyright {
 	padding-left: 2.5rem;
 	font-size: 0.8rem;
@@ -103,7 +108,7 @@
 		justify-content: space-between;
 	}
 }
-@media (max-width:42.75rem) {
+@media (max-width: 42.75rem) {
 	.links {
 		gap: 3.5rem;
 	}
