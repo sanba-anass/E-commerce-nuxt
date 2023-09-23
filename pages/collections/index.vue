@@ -1,4 +1,3 @@
-import { CartDrawer } from '../../.nuxt/components';
 <template>
 	<div>
 		<h1>Collections</h1>
