@@ -53,6 +53,7 @@
 </template>
 
 <script setup>
+definePageMeta({ keepalive: false });
 const blogItems = [
 	{
 		title: "THE CREATIVES: MÓNICA SORDO",

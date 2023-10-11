@@ -2,11 +2,23 @@
 	<div class="slider-item">
 		<div @mouseleave="switchImage = false" @mouseenter="switchImage = true">
 			<div class="images">
-				<NuxtImg
-					loading="lazy"
-					:src="!switchImage ? url1 : url2"
-				/>
-				<div class="arrows">
+				<NuxtLink
+					:to="`/shop/${title.split(' ').join('-')}?page=${1}&id=${id}`"
+				>
+					<NuxtImg
+						:placeholder="[381, 483, 50, 0]"
+						loading="lazy"
+						:src="!switchImage ? url1 : url2"
+					/>
+				</NuxtLink>
+				<div
+					@click.self="
+						useRouter().push(
+							`/shop/${title.split(' ').join('-')}?page=${1}&id=${id}`
+						)
+					"
+					class="arrows"
+				>
 					<button @click="switchSliderItemImage" class="left-arrow">
 						<LeftArrow />
 					</button>
@@ -15,14 +27,15 @@
 					</button>
 				</div>
 				<button class="shop-button">Quick Shop</button>
-				<button @click="isFavourite = !isFavourite" class="heart-button">
-					<HeartIconFilled v-if="isFavourite" />
-					<HeartIcon2 v-else />
-				</button>
+				<FavouriteButton :id="id" />
 			</div>
 		</div>
 		<div class="slider-item-content">
-			<h4 class="title">{{ title }}</h4>
+			<NuxtLink
+				:to="`/shop/${title.split(' ').join('-')}?page=${1}&id=${id}`"
+				class="title"
+				>{{ title }}</NuxtLink
+			>
 			<div class="rating-starts">
 				<StartIcon v-for="_ in 5" />
 			</div>
@@ -38,19 +51,22 @@
 
 <script setup lang="ts">
 const switchImage = ref(false);
-const isFavourite = ref(false);
+const supabase = useSupabaseClient();
 
 function switchSliderItemImage() {
 	switchImage.value = !switchImage.value;
 }
+
 interface Props {
 	url1: string;
 	url2: string;
 	title: string;
 	price: number;
 	oldPrice: number | null;
+	id: string;
 }
-const { url1, url2, title, price, oldPrice } = defineProps<Props>();
+
+const { url1, url2, title, price, oldPrice, id } = defineProps<Props>();
 </script>
 
 <style scoped>
@@ -82,7 +98,15 @@ const { url1, url2, title, price, oldPrice } = defineProps<Props>();
 }
 .slider-item-content .title {
 	margin-bottom: 0.5rem;
-	margin-top: 2rem;
+	margin-top: 0.75rem;
+	font-weight: 500;
+	font-size: 0.9rem;
+	cursor: pointer;
+	display: inline-block;
+	text-decoration: none;
+}
+.slider-item-content .title:hover {
+	text-decoration: underline;
 }
 .slider-item-content .prices .price {
 	color: #c0883e;
@@ -128,6 +152,13 @@ const { url1, url2, title, price, oldPrice } = defineProps<Props>();
 	transform: translateX(-1rem);
 	background: 0;
 	border: 0;
+	background-color: rgba(189, 189, 189, 0.493);
+	width: 1.5rem;
+	height: 1.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
 }
 .slider .slider-item .images:hover:hover .left-arrow {
 	opacity: 1;
@@ -137,8 +168,14 @@ const { url1, url2, title, price, oldPrice } = defineProps<Props>();
 	transition: 0.3s opacity, 0.3s transform;
 	opacity: 0;
 	transform: translateX(1rem);
-	background: 0;
 	border: 0;
+	width: 1.5rem;
+	height: 1.5rem;
+	background-color: rgba(189, 189, 189, 0.493);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
 }
 .slider .slider-item .images:hover .right-arrow {
 	opacity: 1;
@@ -149,15 +186,7 @@ const { url1, url2, title, price, oldPrice } = defineProps<Props>();
 	opacity: 1;
 	bottom: 1.25rem;
 }
-.heart-button {
-	position: absolute;
-	top: 1rem;
-	right: -2rem;
-	background: 0;
-	border: 0;
-	transition: 0.4s;
-	opacity: 0;
-}
+
 .slider .slider-item .images:hover .heart-button {
 	right: 1rem;
 	opacity: 1;

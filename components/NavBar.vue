@@ -11,6 +11,7 @@
 		<ul>
 			<li>
 				<NuxtLink
+					@click="isVisible = false"
 					:active-class="'active-style'"
 					@mouseenter="isVisible = false"
 					to="/"
@@ -20,11 +21,13 @@
 			</li>
 			<li>
 				<NuxtLink
+					:to="`/shop?page=${1}`"
 					:active-class="'active-style'"
 					@mouseenter="
 						isVisible = true;
 						isCollection = false;
 					"
+					@click="isVisible = false"
 					class="nav-link shop"
 					>shop
 				</NuxtLink>
@@ -36,6 +39,7 @@
 						isVisible = true;
 						isCollection = true;
 					"
+					@click="isVisible = false"
 					class="nav-link"
 					to="/collections"
 					>collections</NuxtLink
@@ -43,6 +47,7 @@
 			</li>
 			<li>
 				<NuxtLink
+					@click="isVisible = false"
 					to="/about"
 					:active-class="'active-style'"
 					@mouseenter="isVisible = false"
@@ -52,6 +57,7 @@
 			</li>
 			<li>
 				<NuxtLink
+					@click="isVisible = false"
 					:active-class="'active-style'"
 					to="/blogs"
 					@mouseenter="isVisible = false"
@@ -236,6 +242,8 @@
 </template>
 
 <script setup lang="ts">
+const { nextPage, previousPage } = usePagination();
+
 const isVisibleSearchMenu = ref(false);
 function showSideBar() {
 	isVisibleSearchMenu.value = true;
@@ -730,7 +738,7 @@ nav .logo {
 		display: none;
 	}
 }
-a{
+a {
 	text-decoration: none;
 }
 </style>

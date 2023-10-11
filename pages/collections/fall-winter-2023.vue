@@ -26,7 +26,9 @@
 	</div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+definePageMeta({ keepalive: false });
+</script>
 
 <style scoped>
 .container {

@@ -1,11 +1,15 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+	app: {
+		keepalive: true,
+	},
 	components: [
 		{ path: "~/components/icons", pathPrefix: false },
 		"~/components",
 	],
 	modules: [
 		"@nuxt/image",
+		"@nuxtjs/supabase",
 		[
 			"@nuxtjs/google-fonts",
 			{
@@ -30,5 +34,7 @@ export default defineNuxtConfig({
 	routeRules: {
 		"/": { prerender: true },
 	},
-	
+	supabase: {
+		redirect: false,
+	},
 });

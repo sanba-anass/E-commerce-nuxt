@@ -36,13 +36,14 @@
 				<option>New Arrival</option>
 			</select>
 			<ul class="slider">
-				<SliderItem
+				<ProductItem
 					v-for="src in sliderImages"
 					:url1="src.url1"
 					:url2="src.url2"
 					:title="src.title"
 					:price="src.price"
 					:old-price="src.oldPrice"
+					:id="src.id.toString()"
 				/>
 			</ul>
 			<h2>Shop By Category</h2>
@@ -102,6 +103,7 @@
 </template>
 
 <script setup lang="ts">
+
 const selected = ref("Featured");
 const categoryItems = [
 	{
@@ -509,7 +511,7 @@ h2 {
 	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
-.slider-item {
+/* .slider-item {
 	position: relative;
 	transition: 0.3s;
 }
@@ -527,7 +529,7 @@ h2 {
 	padding: 1rem;
 	cursor: pointer;
 	display: flex;
-}
+} */
 .slider .slider-item .arrows .left-arrow {
 	transition: 0.3s opacity, 0.3s transform;
 	opacity: 0;
@@ -555,7 +557,7 @@ h2 {
 .hero-img {
 	background: linear-gradient(
 			to top,
-			rgba(0, 0, 0, 0.40),
+			rgba(0, 0, 0, 0.4),
 			rgba(255, 255, 255, 0)
 		),
 		url("~/assets/images/hero-img.webp");

@@ -22,9 +22,13 @@ const { isOpen, closeCartDrawer } = useOpenCartDrawer();
 	font-family: inherit;
 	font-display: swap !important;
 }
+html{
+	scroll-behavior: smooth;
+}
 
 body {
 	font-family: "Nunito Sans", sans-serif;
+	
 }
 
 a {
@@ -57,6 +61,9 @@ ul {
 	bottom: 0;
 	background-color: rgba(0, 0, 0, 0.295);
 	z-index: 999999;
+}
+input[type="checkbox"] {
+	accent-color: black;
 }
 
 @keyframes reveal {
