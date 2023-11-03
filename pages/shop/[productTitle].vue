@@ -7,10 +7,12 @@
 						:class="{ isSelectingImg }"
 						v-for="_ in productImagesDetail"
 						:src="ImgSrc"
+						loading="lazy"
 					/>
 				</div>
 				<div class="small-images">
 					<NuxtImg
+						loading="lazy"
 						class="small-img"
 						v-for="(image, index) in productImagesDetail"
 						:src="image.url"
@@ -21,7 +23,10 @@
 			</div>
 			<div class="product-details">
 				<h1 class="title">{{ currentProduct.data[0]?.title }}</h1>
-				<p class="price">${{ currentProduct.data[0]?.price.toFixed(2) }}</p>
+				<div class="review-flex">
+					<p class="price">${{ currentProduct.data[0]?.price.toFixed(2) }}</p>
+					<Rating :rating="currentProduct.data[0]?.rating" />
+				</div>
 				<p class="description">{{ currentProduct.data[0]?.description }}</p>
 				<div class="product-options">
 					<div class="option">
@@ -55,28 +60,24 @@
 				<textarea placeholder="Write here your notes for the order"></textarea>
 				<div class="quantity">quantity:</div>
 				<div class="quantity-details">
-					<div class="quantity-counter">
-						<button @click="decreaseQuantity">
-							<MinusIcon />
-						</button>
-
-						<input
-							@keydown="onkeydown"
-							@input="updateQuantityViaInput"
-							min="1"
-							:disabled="disabled"
-							:value="currentProduct.data[0]?.quantity"
-							type="number"
-							class="quantity-input"
-						/>
-						<button @click="increaseQuantity"><PlusIcon /></button>
-					</div>
-					<div class="add-to-bag-button">Add To Bag</div>
+					<QuantityConuter
+						:productId="currentProduct.data[0]?.id"
+						:width="8"
+						:height="3"
+						v-model:quantity="quantity"
+						:isCartItem="false"
+					/>
+					<button
+						:disabled="pending"
+						@click="addOrderItem"
+						class="add-to-bag-button"
+					>
+						<Spinner v-if="pending" />
+						<div v-else>Add to Bag</div>
+					</button>
 				</div>
-				<button class="paypal-button">
-					<span class="paypal-button-title"> Buy with </span>
-					<span class="paypal-logo"> <i>Pay</i><i>Pal</i> </span>
-				</button>
+				<PayPalButton />
+
 				<div class="payment-title">guaranted safe checkout:</div>
 				<NuxtImg
 					class="payment-providers"
@@ -121,7 +122,17 @@
 	align-items: center;
 	gap: 6.5rem;
 }
-
+button:disabled {
+	background: rgb(219, 219, 219);
+	color: rgb(104, 104, 104);
+	cursor: not-allowed;
+}
+.review-flex {
+	display: flex;
+	align-items: center;
+	margin-bottom: 1.75rem;
+	gap: 1rem;
+}
 .social-section .text {
 	margin-left: 0.5rem;
 	font-size: 0.9rem;
@@ -173,64 +184,12 @@ input::-webkit-inner-spin-button {
 .add-to-wishlist a:hover {
 	text-decoration: underline;
 }
-.paypal .logo {
-	font-family: Verdana, Tahoma;
-	font-weight: bold;
-	font-size: 26px;
-}
-i:first-child {
-	color: #253b80;
-	font-weight: 800;
-}
 
-i:last-child {
-	color: #179bd7;
-	font-weight: 800;
-}
-
-.paypal-button {
-	padding: 15px 30px;
-	background: #f9b5216e;
-	margin: 0 auto;
-	display: block;
-	min-width: 138px;
-	position: relative;
-	margin-top: 0.5rem;
-	width: 100%;
-	border: 0;
-	transition: 0.3s;
-}
 .payment-providers {
 	width: 25rem;
 	margin-top: 1.25rem;
 }
-.paypal-button:hover {
-	background: #ffbb27;
-}
-.paypal-logo {
-	display: inline-block;
-	font-size: 1.15rem;
-}
-.paypal-button-title {
-	font-size: 14px;
-	color: #000000;
-	vertical-align: baseline;
-	font-weight: 800;
-	text-transform: uppercase;
-	font-size: 0.85rem;
-}
-.quantity-details {
-	display: flex;
-	gap: 1rem;
-}
-.quantity-input {
-	width: 3rem;
-	background-color: rgb(247, 247, 247);
-	border: 1px solid rgb(219, 219, 219);
-	font-size: 1.2rem;
-	text-align: center;
-	border-inline: 0;
-}
+
 .add-to-bag-button {
 	background-color: black;
 	color: white;
@@ -238,19 +197,14 @@ i:last-child {
 	padding-block: 1rem;
 	cursor: pointer;
 	width: 100%;
+	font-weight: bold;
+	border: 0;
 }
-.quantity-input:focus {
-	outline: none;
-}
-.quantity-counter {
+.quantity-details {
 	display: flex;
+	gap: 1rem;
 }
-.quantity-counter button {
-	align-self: stretch;
-	padding: 0.8rem 0.25rem;
-	background: none;
-	border: 1px solid #eee;
-}
+
 .notes {
 	margin-bottom: 0.5rem;
 	font-weight: 700;
@@ -361,7 +315,6 @@ textarea:focus {
 .product-details .price {
 	font-size: 1.4rem;
 	font-weight: 800;
-	margin-bottom: 1.75rem;
 }
 .product-details .description {
 	font-size: 0.95rem;
@@ -439,11 +392,10 @@ textarea:focus {
 
 <script setup lang="ts">
 const route = useRoute();
-const disabled = ref(true);
+
 const isSelectingImg = ref(false);
 
 const queryId: string = route.query.id as string;
-
 
 const supabase = useSupabaseClient();
 
@@ -459,62 +411,6 @@ if (!currentProduct.value) {
 		statusMessage: "Not Found",
 	});
 }
-const quantity = ref(currentProduct.value.data[0]?.quantity);
-
-async function updateQuantity(action: "increase" | "decrease") {
-	const id = currentProduct.value.data[0]?.id;
-	//@ts-ignore
-	action === "increase" ? quantity.value++ : quantity.value--;
-	//@ts-ignore
-	await supabase
-		.from("product")
-		//@ts-ignore
-
-		.update({
-			quantity: quantity.value,
-		})
-		.eq("id", id);
-	await refreshNuxtData();
-}
-async function increaseQuantity() {
-	await updateQuantity("increase");
-}
-async function decreaseQuantity() {
-	//@ts-ignore
-	if (currentProduct.value.data[0]?.quantity === 1) {
-		return;
-	}
-	await updateQuantity("decrease");
-}
-onMounted(() => {
-	disabled.value = false;
-});
-
-async function updateQuantityViaInput(event: Event) {
-	const eventTarget = event?.target as HTMLInputElement;
-	if (eventTarget?.value === "0") {
-		eventTarget.value = eventTarget.value.replace(/^0+/, "");
-		return;
-	}
-	//@ts-ignore
-	const id = currentProduct.value.data[0]?.id;
-	quantity.value = eventTarget.value;
-	await supabase
-		.from("product")
-		//@ts-ignore
-
-		.update({
-			quantity: quantity.value,
-		})
-		.eq("id", id);
-}
-function onkeydown(event: Event) {
-	const invalidChars = ["-", "+", "e"];
-
-	if (invalidChars.includes((event as KeyboardEvent).key)) {
-		event.preventDefault();
-	}
-}
 
 const productImagesDetail = ref(
 	//@ts-ignore
@@ -527,7 +423,8 @@ const productImagesDetail = ref(
 		}
 	)
 );
-let id: any;
+const quantity = ref(1);
+let id: NodeJS.Timeout;
 const ImgSrc = ref(productImagesDetail.value[0].url);
 const setActiveImg = (index: number) => {
 	productImagesDetail.value[index].isActive = true;
@@ -544,22 +441,71 @@ const setActiveImg = (index: number) => {
 			productImagesDetail.value[i].isActive = false;
 		}
 	});
-	window.scrollTo(0,0)
 };
+const { openCartDrawer } = useOpenCartDrawer();
+const pending = useAddCartPending();
 
-// const updateIsFavourite = async (id: string) => {
-// 	console.log(currentProduct.value.data[0]?.isFavourite);
-// 	await supabase
-// 		.from("product")
-// 		.update({
-// 			isFavourite: !currentProduct.value.data[0]?.isFavourite,
-// 		})
-// 		.eq("id", id);
+async function addOrderItem() {
+	pending.value = true;
+	const { data: orderItems } = await supabase.from("order_item").select("*");
 
-// 	await refreshNuxtData();
-// };
+	const productToInserted = orderItems?.find(
+		(item: any) => item.product_id === queryId.toString()
+	);
+	console.log(orderItems);
+	console.log("productToInserted:", productToInserted);
+
+	if (productToInserted) {
+		const { data: order } = await supabase
+			.from("order_item")
+			.select("total_quantity")
+			.eq("product_id", productToInserted.product_id);
+		const total_quantity =
+			parseInt(order![0].total_quantity) + parseInt(quantity.value);
+		await supabase
+			.from("order_item")
+			//@ts-ignore
+			.update({
+				total_quantity: total_quantity,
+			})
+			.eq("product_id", productToInserted.product_id);
+
+		await refreshNuxtData();
+		pending.value = false;
+		openCartDrawer();
+		return;
+	}
+	const { data: currentProduct } = await supabase
+		.from("product")
+		.select("*")
+		.eq("id", queryId);
+
+	//@ts-ignore
+	await supabase.from("order_item").insert({
+		product_id: currentProduct[0].id,
+		total_quantity: quantity.value,
+		title: currentProduct[0].title,
+		image: currentProduct[0].detail_images[0],
+		price: currentProduct[0].price,
+		sku: currentProduct[0].sku,
+		size: currentProduct[0].size,
+	});
+	const { data: orderItems2 } = await supabase.from("order_item").select("*");
+	const total = orderItems2?.reduce(
+		(total, item) => item.total_quantity * item.price + total,
+		0
+	);
+	console.log(total);
+
+	await supabase.from("order").insert({
+		total_order_price: total,
+	});
+	console.log(currentProduct);
+	await refreshNuxtData();
+	pending.value = false;
+	openCartDrawer();
+}
 onUnmounted(() => {
 	clearTimeout(id);
 });
-
 </script>

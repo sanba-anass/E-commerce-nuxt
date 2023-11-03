@@ -2,8 +2,8 @@
 	<div class="container">
 		<h1>About</h1>
 		<section class="images">
-			<NuxtImg loading="lazy" src="images/about-img1.webp" />
-			<NuxtImg loading="lazy" src="images/about-img2.webp" />
+			<NuxtImg src="images/about-img1.webp" />
+			<NuxtImg src="images/about-img2.webp" />
 		</section>
 		<section class="paragraphs">
 			<p>

@@ -1,5 +1,5 @@
 <template>
-	<ClientOnly>
+	
 		<div @click="active = !active" class="item">
 			<div class="content">
 				<ListIcon />
@@ -15,7 +15,6 @@
 				</div>
 			</div>
 		</div>
-	</ClientOnly>
 </template>
 
 <script setup lang="ts">

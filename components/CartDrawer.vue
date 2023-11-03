@@ -1,34 +1,56 @@
 <template>
-	<div :class="{ open: !isOpen }" class="cart-drawer">
+	<div :class="{ open: isDrawerOpen }" class="cart-drawer">
 		<header>
 			<h2>Cart</h2>
 			<button @click="closeCartDrawer">
 				<CloseIcon />
 			</button>
 		</header>
-		<div class="cart-saved-items">
-			<p class="cart-message">your cart is empty</p>
-		</div>
+		<main class="cart-content">
+			<div>
+				<ul
+					:class="{ 'border-bottom': orderItems?.data.length === 3 }"
+					v-if="orderItems?.data.length !== 0"
+					class="order-items"
+				>
+					<OrderItem
+						v-for="item in orderItems.data"
+						:title="item.title"
+						:price="item.price"
+						:image="item.image"
+						:productId="item.product_id"
+						:totalQuantity="item.total_quantity"
+						:key="item.id"
+						:sku="item.sku"
+						:size="item.size"
+					/>
+				</ul>
+				<div class="text-center" v-else>No products in the cart.</div>
+			</div>
+			<div class="buttons">
+				<NuxtLink class="checkout">Checkout</NuxtLink>
+				<NuxtLink to="/shop/cart" class="view-cart">View Cart</NuxtLink>
+			</div>
+		</main>
 	</div>
 </template>
 
 <script setup lang="ts">
-const { isOpen, closeCartDrawer } = useOpenCartDrawer();
-const screenWidth = ref<number | null>(null);
-if (process.client) {
-	screenWidth.value = screen.width;
-}
+const supabase = useSupabaseClient();
+
+const { data: orderItems } = await useAsyncData(
+	async () => await supabase.from("order_item").select("*")
+);
+const { closeCartDrawer, isDrawerOpen } = useOpenCartDrawer();
+
+console.log(orderItems.value);
 </script>
 
 <style scoped>
-.cart-saved-items {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	height: calc(100vh - 64px);
-}
-.cart-message {
-	text-transform: uppercase;
+.text-center {
+	text-align: center;
+	margin-top: 5rem;
+	font-size: 1.15rem;
 }
 button {
 	background: 0;
@@ -65,27 +87,94 @@ header::before {
 	min-height: 100vh;
 	top: 0;
 	width: 25rem;
-	transform: translateX(0%);
+	transform: translateX(100%);
 	background-color: #ffffff;
 	transition-timing-function: ease-in-out;
 	position: fixed;
 	right: 0;
-	z-index: 999999999;
+	z-index: 9999999999999999;
 	transition: 0.5s transform;
-	overflow: auto;
 }
+
 @media (max-width: 700px) {
 	.cart-drawer {
 		width: 75%;
 	}
 }
 .open {
-	transform: translateX(102%);
+	transform: translateX(0%);
 	overflow: hidden;
 }
 .cart-saved-items {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+.order-items {
+	height: 300px;
+	overflow: auto;
+	margin-right: 0.25rem;
+}
+.border-bottom {
+	border-bottom: 1px solid #eee;
+}
+
+.order-items::-webkit-scrollbar {
+	width: 9px;
+}
+
+/* Track */
+
+.order-items::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+
+/* Handle */
+
+.order-items::-webkit-scrollbar-thumb {
+	background: #b3b3b3;
+	border-radius: 10rem;
+}
+
+/* Handle on hover */
+
+.order-items::-webkit-scrollbar-thumb:hover {
+	background: #797979;
+}
+.cart-content {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 90vh;
+}
+.checkout {
+	background: black;
+	width: 100%;
+	margin: 0 auto;
+	padding-block: 0.85rem;
+	font-size: 0.95rem;
+	color: rgb(255, 255, 255);
+	margin-bottom: 1rem;
+	display: inline-block;
+	text-align: center;
+	cursor: pointer;
+	text-decoration: none;
+}
+.view-cart {
+	border: 1px solid rgb(179, 179, 179);
+	width: 100%;
+	margin: 0 auto;
+	padding-block: 0.85rem;
+	font-size: 0.95rem;
+	color: #000;
+	margin-bottom: 2rem;
+	display: inline-block;
+	text-align: center;
+	cursor: pointer;
+	text-decoration: none;
+}
+.buttons {
+	padding-inline: 1.5rem;
+	user-select: none;
 }
 </style>

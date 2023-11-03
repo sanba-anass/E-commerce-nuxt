@@ -6,7 +6,6 @@
 					:to="`/shop/${title.split(' ').join('-')}?page=${1}&id=${id}`"
 				>
 					<NuxtImg
-						:placeholder="[381, 483, 50, 0]"
 						loading="lazy"
 						:src="!switchImage ? url1 : url2"
 					/>
@@ -36,9 +35,7 @@
 				class="title"
 				>{{ title }}</NuxtLink
 			>
-			<div class="rating-starts">
-				<StartIcon v-for="_ in 5" />
-			</div>
+			<Rating :rating="rating" />
 			<div class="prices">
 				<div class="price old">
 					{{ oldPrice ? "$" : "" }} {{ oldPrice?.toFixed(2) }}
@@ -51,7 +48,6 @@
 
 <script setup lang="ts">
 const switchImage = ref(false);
-const supabase = useSupabaseClient();
 
 function switchSliderItemImage() {
 	switchImage.value = !switchImage.value;
@@ -64,9 +60,10 @@ interface Props {
 	price: number;
 	oldPrice: number | null;
 	id: string;
+	rating: number;
 }
 
-const { url1, url2, title, price, oldPrice, id } = defineProps<Props>();
+const { url1, url2, title, price, oldPrice, id, rating } = defineProps<Props>();
 </script>
 
 <style scoped>

@@ -37,13 +37,15 @@
 			</select>
 			<ul class="slider">
 				<ProductItem
-					v-for="src in sliderImages"
-					:url1="src.url1"
-					:url2="src.url2"
-					:title="src.title"
-					:price="src.price"
-					:old-price="src.oldPrice"
-					:id="src.id.toString()"
+					v-for="product in _products"
+					:url1="product.preview_images[0]"
+					:url2="product.preview_images[1]"
+					:title="product.title"
+					:price="product.price"
+					:old-price="null"
+					:id="product.id"
+					:key="product.id"
+					:rating="product.rating"
 				/>
 			</ul>
 			<h2>Shop By Category</h2>
@@ -103,8 +105,52 @@
 </template>
 
 <script setup lang="ts">
-
 const selected = ref("Featured");
+const supabase = useSupabaseClient();
+const _products = useProductList();
+const route = useRoute();
+const { data: products } = await useAsyncData(async () => {
+	return await supabase
+		.from("product")
+		.select("*")
+		.eq("category", "Featured Products")
+		.limit(4);
+});
+_products.value = products.value?.data;
+watch(
+	() => route.fullPath,
+	() => {
+		_products.value = products.value?.data;
+	}
+);
+
+const tabs = ref([
+	{ text: "Featured", isActive: true },
+	{ text: "Best Selle", isActive: false },
+	{ text: "New Arrivals", isActive: false },
+]);
+const isActive = ref(true);
+const handleTabs = (index: number) => {
+	tabs.value[index].isActive = true;
+	isActive.value = false;
+	selected.value = tabs.value[index].text;
+
+	tabs.value.forEach((_, i) => {
+		if (i !== index) {
+			tabs.value[i].isActive = false;
+		}
+	});
+	// switch (index) {
+	// 	case 0:
+	// 		sliderImages.value = sliderImages1;
+	// 		break;
+	// 	case 1:
+	// 		sliderImages.value = sliderImages2;
+	// 		break;
+	// 	case 2:
+	// 		sliderImages.value = sliderImages3;
+	// }
+};
 const categoryItems = [
 	{
 		title: "Shop Sweaters",
@@ -131,161 +177,47 @@ const categoryItems = [
 		imageUrl: "images/category6-img.webp",
 	},
 ];
+watch(
+	selected,
+	async (newValue) => {
+		console.log(newValue);
+		switch (newValue) {
+			case "Featured":
+				const { data: featuredProducts } = await useAsyncData(async () => {
+					return await supabase
+						.from("product")
+						.select("*")
+						.eq("category", "Featured Products")
+						.limit(4);
+				});
+				_products.value = featuredProducts.value?.data;
+				break;
+			case "Best Selle":
+				const { data: bestSellingProducts } = await useAsyncData(async () => {
+					return await supabase
+						.from("product")
+						.select("*")
+						.eq("category", "Best Sellers")
+						.limit(4);
+				});
 
-const tabs = ref([
-	{ text: "Featured", isActive: true },
-	{ text: "Best Selle", isActive: false },
-	{ text: "New Arrival", isActive: false },
-]);
-const isActive = ref(true);
-const handleTabs = (index: number) => {
-	tabs.value[index].isActive = true;
-	isActive.value = false;
+				_products.value = bestSellingProducts.value?.data;
 
-	tabs.value.forEach((_, i) => {
-		if (i !== index) {
-			tabs.value[i].isActive = false;
+				break;
+			case "New Arrivals":
+				const { data: newArrivalsProducts } = await useAsyncData(async () => {
+					return await supabase
+						.from("product")
+						.select("*")
+						.eq("category", "New Arrivals")
+						.limit(4);
+				});
+				_products.value = newArrivalsProducts.value?.data;
 		}
-	});
-	switch (index) {
-		case 0:
-			sliderImages.value = sliderImages1;
-			break;
-		case 1:
-			sliderImages.value = sliderImages2;
-			break;
-		case 2:
-			sliderImages.value = sliderImages3;
-	}
-};
-watch(selected, (newValue) => {
-	switch (newValue) {
-		case "Featured":
-			sliderImages.value = sliderImages1;
-			break;
-		case "Best Selle":
-			sliderImages.value = sliderImages2;
-			break;
-		case "New Arrival":
-			sliderImages.value = sliderImages3;
-	}
-});
-const sliderImages = ref([
-	{
-		url1: "images/product1-img.jpg",
-		url2: "images/product1-img-v2.jpg",
-		switchImage: false,
-		id: 0,
-		title: "Wide Leg Pleate Shorts",
-		price: 315.0,
-		oldPrice: null,
+		await refreshNuxtData();
 	},
-	{
-		url1: "images/product2-img.jpg",
-		url2: "images/product2-img-v2.jpg",
-		switchImage: false,
-		id: 1,
-		title: "Tapered High Rise Jeans",
-		price: 149.0,
-		oldPrice: 290.0,
-	},
-	{
-		url1: "images/product3-img.jpg",
-		url2: "images/product3-img-v2.jpg",
-		switchImage: false,
-		id: 2,
-		title: "Boucles D’Orille Suede Pumps",
-		price: 149.0,
-		oldPrice: 225.0,
-	},
-	{
-		url1: "images/product4-img.jpg",
-		url2: "images/product4-img-v2.jpg",
-		switchImage: false,
-		id: 3,
-		title: "Square Toe Suede Pumps",
-		price: 14.25,
-		oldPrice: null,
-	},
-]);
-
-const sliderImages1 = [...sliderImages.value];
-const sliderImages2 = [
-	{
-		url1: "images/product6-img.jpg",
-		url2: "images/product6-img-v2.jpg",
-		switchImage: false,
-		id: 0,
-		title: "New Cut-Out Waist Sundress",
-		price: 89.0,
-		oldPrice: null,
-	},
-	{
-		url1: "images/product7-img.jpg",
-		url2: "images/product7-img-v2.jpg",
-		switchImage: false,
-		id: 1,
-		title: "Tapered High Rise Jeans",
-		price: 78.0,
-		oldPrice: null,
-	},
-	{
-		url1: "images/product8-img.jpg",
-		url2: "images/product8-img-v2.jpg",
-		switchImage: false,
-		id: 2,
-		title: "Silk Sleeve Short Jumper",
-		price: 149.0,
-		oldPrice: null,
-	},
-	{
-		url1: "images/product9-img.jpg",
-		url2: "images/product9-img-v2.jpg",
-		switchImage: false,
-		id: 3,
-		title: "Open Back Bodysuit",
-		price: 110.0,
-		oldPrice: null,
-	},
-];
-const sliderImages3 = [
-	{
-		url1: "images/product10-img.jpg",
-		url2: "images/product10-img-v2.jpg",
-		switchImage: false,
-		id: 0,
-		title: "Linen Flap-Pocket Blazer",
-		price: 187.0,
-		oldPrice: null,
-	},
-	{
-		url1: "images/product11-img.jpg",
-		url2: "images/product11-img-v2.jpg",
-		switchImage: false,
-		id: 1,
-		title: "Open Back Slip Dress",
-		price: 190.0,
-		oldPrice: null,
-	},
-	{
-		url1: "images/product12-img.jpg",
-		url2: "images/product12-img-v2.jpg",
-		switchImage: false,
-		id: 2,
-		title: "Cut-Out Waist Sundress",
-		price: 89.0,
-		oldPrice: null,
-	},
-	{
-		url1: "images/product5-img.jpg",
-		url2: "images/product5-img-v2.jpg",
-		switchImage: false,
-		id: 4,
-		title: "Asymmetric Merino Shirt",
-		price: 125.0,
-		oldPrice: null,
-	},
-];
+	{ immediate: true }
+);
 </script>
 <style scoped>
 .overlay {

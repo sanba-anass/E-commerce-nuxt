@@ -40,7 +40,7 @@
 						:oldPrice="null"
 						:id="product.id"
 						:key="product.id"
-						:isFavourite="isFavourite"
+						:rating="product.rating"
 					/>
 				</div>
 				<Pagination :disabledAmount="disabledAmount" />
@@ -51,15 +51,20 @@
 
 			<div @click="closeDrawer" v-if="isOpen" class="overlay"></div>
 		</Teleport>
-		
 	</div>
 </template>
 
 <script setup lang="ts">
+// definePageMeta({
+// 	middleware: ["change-page"],
+// 	// or middleware: 'auth'
+// });
+
 import { Grid2Icon } from "#components";
 import { Grid3Icon } from "#components";
 
 const supabase = useSupabaseClient();
+
 const count = useCount();
 
 const disabledAmount = ref(1);
@@ -84,7 +89,7 @@ const { data: products } = await useAsyncData(async () => {
 		.select("*")
 		.range(from.value, to.value)
 		.eq("category", "Best Sellers");
-})
+});
 const _products = useProductList();
 _products.value = products.value?.data;
 
@@ -187,7 +192,6 @@ watch(
 		}
 	}
 );
-
 
 const router = useRouter();
 watch(selectedFilter, async (newValue) => {
@@ -372,12 +376,18 @@ if (process.client) {
 		match.removeEventListener("change", switchTo2Columns);
 	});
 }
-if (!route.query.page) {
-	throw createError({
-		statusCode: 404,
-		statusMessage: "Not Found",
-	});
-}
+watch(
+	() => route.fullPath,
+	() => {
+		if (!route.query.page) {
+			throw createError({
+				statusCode: 404,
+				statusMessage: "Not Found",
+			});
+		}
+	},
+	{ deep: true, immediate: true }
+);
 </script>
 
 <style scoped>

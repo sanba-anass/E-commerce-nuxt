@@ -1,13 +1,13 @@
 <template>
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
-		width="1.25rem"
-		height="1.25rem"
+		width="1.05rem"
+		height="1.05rem"
 		viewBox="0 0 24 24"
 	>
 		<path
-			fill="#000000"
-			d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12Z"
+			fill="#7E7E7E"
+			d="M7 21q-.825 0-1.413-.588T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.588 1.413T17 21H7ZM17 6H7v13h10V6ZM9 17h2V8H9v9Zm4 0h2V8h-2v9ZM7 6v13V6Z"
 		></path>
 	</svg>
 </template>

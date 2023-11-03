@@ -1,0 +1,108 @@
+<template>
+	<div class="cart-item">
+		<div class="product">
+			<DeleteButton :productId="productId" />
+			<NuxtImg
+				:to="`/shop/${title.split(' ').join('-')}?id=${productId}`"
+				class="img"
+				:src="image"
+			/>
+			<div class="caption">
+				<NuxtLink
+					:to="`/shop/${title.split(' ').join('-')}?id=${productId}`"
+					class="title"
+					>{{ title }}</NuxtLink
+				>
+				<p class="sku">SKU: {{ sku }}</p>
+				<p class="size">SIZE: {{ size }}</p>
+			</div>
+		</div>
+		<div class="details">
+			<p class="price">${{ price.toFixed(2) }}</p>
+
+			<QuantityConuter
+				:productId="productId"
+				class="counter"
+				v-model:quantity="quantity"
+				:isCartItem="true"
+			/>
+
+			<p class="total-price">${{ (quantity * price).toFixed(2) }}</p>
+		</div>
+	</div>
+</template>
+
+<script setup lang="ts">
+interface Props {
+	productId: string;
+	title: string;
+	price: number;
+	image: string;
+	totalQuantity: number;
+	sku: string;
+	size: string;
+}
+const { productId, totalQuantity, title, price, image, sku, size } =
+	defineProps<Props>();
+const supabase = useSupabaseClient();
+const quantity = ref(totalQuantity);
+</script>
+
+<style scoped>
+.cart-item {
+	display: flex;
+	border: 1px solid #eee;
+	padding: 2rem;
+	border-top: none;
+	align-items: center;
+	justify-content: space-between;
+}
+.total-price {
+	font-weight: 700;
+}
+
+.product {
+	display: flex;
+	align-items: center;
+	width: 50%;
+}
+.cart-item .img {
+	width: 8rem;
+	margin-left: 2rem;
+	cursor: pointer;
+}
+.caption {
+	margin-left: 1.5rem;
+}
+.title {
+	margin-bottom: 0.25rem;
+	display: inline-block;
+	font-size: 0.85rem;
+	font-weight: 700;
+	cursor: pointer;
+	text-decoration: none;
+}
+.title:hover {
+	text-decoration: underline;
+}
+.sku,
+.size {
+	color: grey;
+	font-weight: 500;
+	font-size: 0.75rem;
+	margin-bottom: 0.25rem;
+}
+button {
+	background: 0;
+	border: 0;
+}
+.price {
+	font-weight: 700;
+}
+.details {
+	display: flex;
+	align-items: center;
+	width: 50%;
+	justify-content: space-between;
+}
+</style>

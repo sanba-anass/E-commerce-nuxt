@@ -1,20 +1,21 @@
 <template>
 	<NuxtLayout>
-		<Teleport to="body">
-			<CartDrawer />
-			<div @click="closeCartDrawer" v-if="isOpen" class="overlay"></div>
-		</Teleport>
+		<NuxtLoadingIndicator color="#E6733E" />
+
 		<NavBar />
 
+		<CartDrawer />
+		<div @click="closeCartDrawer" v-if="isDrawerOpen" class="overlay"></div>
 		<NuxtPage />
 
 		<Footer />
 	</NuxtLayout>
 </template>
 <script setup>
-const { isOpen, closeCartDrawer } = useOpenCartDrawer();
+const { isDrawerOpen, closeCartDrawer } = useOpenCartDrawer();
 </script>
 <style>
+
 * {
 	padding: 0;
 	margin: 0;
@@ -22,13 +23,12 @@ const { isOpen, closeCartDrawer } = useOpenCartDrawer();
 	font-family: inherit;
 	font-display: swap !important;
 }
-html{
+html {
 	scroll-behavior: smooth;
 }
 
 body {
 	font-family: "Nunito Sans", sans-serif;
-	
 }
 
 a {
@@ -81,5 +81,8 @@ input[type="checkbox"] {
 		display: block;
 		margin: 0 auto;
 	}
+}
+.loading-indicator {
+	background-color: black;
 }
 </style>

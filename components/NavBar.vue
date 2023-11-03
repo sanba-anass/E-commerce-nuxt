@@ -85,11 +85,17 @@
 				><SearchIcon
 			/></NuxtLink>
 			<NuxtLink
+				:class="{ disableIconLink: pending }"
 				@click="
-					openCartDrawer();
-					isVisible = false;
+					() => {
+						if (pending) {
+							return;
+						}
+						openCartDrawer();
+						isVisible = false;
+					}
 				"
-				><CartIcon
+				><CartIcon :class="{ disableIconLink: pending }"
 			/></NuxtLink>
 		</div>
 	</nav>
@@ -206,27 +212,39 @@
 			<div class="content">
 				<p class="title">What Are You Looking For?</p>
 				<div class="input">
-					<input type="text" name="" id="" placeholder="Search for..." />
-					<SearchIcon />
+					<input
+						v-model.trim="searchTerm"
+						type="text"
+						name=""
+						id=""
+						placeholder="Search for..."
+					/>
+					<button
+						:disabled="searchPending"
+						@click="searchProductByTitle"
+						class="search-button"
+					>
+						<SearchIcon v-if="!searchPending" />
+						<Spinner v-else />
+					</button>
 				</div>
 				<div class="trending-searches">
 					<div class="title">trending searches:</div>
 					<div class="tags">
-						<button>Shirt</button>
-						<button>Cotton</button>
-						<button>Square</button>
-						<button>Waist</button>
-						<button>Short</button>
+						<button :key="tag" @click="searchByTag(tag)" v-for="tag in tags">
+							{{ tag }}
+						</button>
 					</div>
 				</div>
 				<p class="title">Popular Categories</p>
 			</div>
 			<div class="searchCateroryItems">
 				<SearchCateroryItem
-					v-for="item in searchCateroryItems"
-					:title="item.title"
-					:amount="item.amount"
-					:ImageUrl="item.imageUrl"
+					@closeMenu="closeMenu(item.brand)"
+					v-for="item in searchCateroryItems.data"
+					:title="item.brand"
+					:amount="5"
+					:ImageUrl="item.preview_images[0]"
 				/>
 			</div>
 		</div>
@@ -242,42 +260,93 @@
 </template>
 
 <script setup lang="ts">
-const { nextPage, previousPage } = usePagination();
-
+const pending = useAddCartPending();
+const products = useProductList();
+const route = useRoute();
+const router = useRouter();
+const searchTerm = ref(route.query?.q?.split(" ").join(" or "));
 const isVisibleSearchMenu = ref(false);
+const searchPending = ref(false);
+const supabase = useSupabaseClient();
+const closeMenu = async (item:string)=>{
+	searchPending.value = true;
+	await router.replace(`/shop?page=1&q=${item}`);
+	const { data } = await supabase
+		.from("product")
+		.select()
+		.textSearch("brand", item, {
+			type: "websearch",
+			config: "english",
+		});
+
+	products.value = data;
+	searchPending.value = false;
+	isVisibleSearchMenu.value = false;
+}
+const searchWords = computed(() =>
+	searchTerm.value
+		?.split(" ")
+		?.map((word, index, arr) =>
+			index === arr.length - 1 ? word : `${word} or`
+		)
+		?.join(" ")
+		?.trim()
+);
+const searchProductByTitle = async (execute = true) => {
+	if (searchTerm.value === "" && execute) {
+		alert("search term can not be empty");
+		return;
+	}
+	searchPending.value = true;
+	await router.replace(
+		`/shop?page=1&q=${searchWords.value?.split("or ").join("")}`
+	);
+	const { data } = await supabase
+		.from("product")
+		.select()
+		.textSearch("title", route.query?.q?.split(" ").join(" or "), {
+			type: "websearch",
+			config: "english",
+		});
+
+	products.value = data;
+	searchPending.value = false;
+	isVisibleSearchMenu.value = false;
+};
+
+if (route.query?.q !== undefined && route.query?.q !== "") {
+	searchProductByTitle(false);
+} else if (route.query?.q === "") {
+	products.value.length = 0;
+}
+
 function showSideBar() {
 	isVisibleSearchMenu.value = true;
 }
 function hideSideBar() {
 	isVisibleSearchMenu.value = false;
 }
-const searchCateroryItems = [
-	{
-		title: "accessorie",
-		amount: 4,
-		imageUrl: "images/search-cat1.jpeg",
-	},
-	{
-		title: "clothings",
-		amount: 11,
-		imageUrl: "images/search-cat2.jpeg",
-	},
-	{
-		title: "footwear",
-		amount: 6,
-		imageUrl: "images/search-cat3.jpeg",
-	},
-	{
-		title: "handbags",
-		amount: 5,
-		imageUrl: "images/search-cat4.jpeg",
-	},
-	{
-		title: "jewellery",
-		amount: 4,
-		imageUrl: "images/search-cat5.jpeg",
-	},
-];
+const searchByTag = async (item: string) => {
+	console.log(item);
+	searchPending.value = true;
+	await router.replace(`/shop?page=1&q=${item}`);
+	const { data } = await supabase
+		.from("product")
+		.select()
+		.textSearch("title", item, {
+			type: "websearch",
+			config: "english",
+		});
+
+	products.value = data;
+	searchPending.value = false;
+	isVisibleSearchMenu.value = false;
+};
+const tags = ["shirt", "cotton", "jacket", "jumper", "Coat"];
+
+const { data: searchCateroryItems } = await useAsyncData(
+	async () => await supabase.from("product").select("*").range(27, 30)
+);
 
 const { openCartDrawer } = useOpenCartDrawer();
 
@@ -313,6 +382,15 @@ const toggleDrawer = () => {
 </script>
 
 <style scoped>
+.nav-icon-links .disableIconLink {
+	cursor: not-allowed !important;
+}
+.search-button {
+	background: 0;
+	cursor: pointer;
+	border: 0;
+	transform: scale(1.3);
+}
 .container {
 	display: flex;
 	max-width: 105rem;
@@ -325,8 +403,8 @@ const toggleDrawer = () => {
 .searchCateroryItems {
 	display: flex;
 	justify-content: center;
-	gap: 2rem;
-	margin-bottom: 3rem;
+	gap: 3rem;
+	padding-bottom: 4rem;
 }
 .search-menu {
 	background-color: rgb(255, 255, 255);

@@ -7,6 +7,13 @@ export default defineNuxtConfig({
 		{ path: "~/components/icons", pathPrefix: false },
 		"~/components",
 	],
+	vite: {
+		vue: {
+		  script: {
+			defineModel: true,
+		  },
+		},
+	  },
 	modules: [
 		"@nuxt/image",
 		"@nuxtjs/supabase",

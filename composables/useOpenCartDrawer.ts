@@ -1,19 +1,17 @@
 export const useOpenCartDrawer = () => {
-	const isOpen = useState("d", () => false);
+	const isDrawerOpen = useState("cart", () => false);
 
 	function openCartDrawer() {
-		isOpen.value = true;
-		console.log(isOpen.value);
+		isDrawerOpen.value = true;
 		document.body.style.overflow = "hidden";
 	}
 	function closeCartDrawer() {
-		isOpen.value = false;
-		console.log(isOpen.value);
+		isDrawerOpen.value = false;
 		document.body.style.overflow = "visible";
 	}
 	return {
 		closeCartDrawer,
 		openCartDrawer,
-		isOpen,
+		isDrawerOpen,
 	};
 };

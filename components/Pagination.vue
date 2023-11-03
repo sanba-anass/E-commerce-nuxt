@@ -26,6 +26,7 @@
 </template>
 
 <script setup lang="ts">
+
 interface Props {
 	disabledAmount: number;
 }
@@ -49,6 +50,7 @@ function setActiveLink(n: number) {
 	changePage(n);
 	count.value = n;
 }
+
 function previousPage() {
 	if (count.value <= 1) {
 		return;
