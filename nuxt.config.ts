@@ -9,11 +9,11 @@ export default defineNuxtConfig({
 	],
 	vite: {
 		vue: {
-		  script: {
-			defineModel: true,
-		  },
+			script: {
+				defineModel: true,
+			},
 		},
-	  },
+	},
 	modules: [
 		"@nuxt/image",
 		"@nuxtjs/supabase",
@@ -38,9 +38,7 @@ export default defineNuxtConfig({
 		preload: true,
 		download: true,
 	},
-	routeRules: {
-		"/": { prerender: true },
-	},
+
 	supabase: {
 		redirect: false,
 	},
