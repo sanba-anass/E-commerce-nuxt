@@ -44,7 +44,6 @@ interface Props {
 }
 const { productId, totalQuantity, title, price, image, sku, size } =
 	defineProps<Props>();
-const supabase = useSupabaseClient();
 const quantity = ref(totalQuantity);
 </script>
 
@@ -57,6 +56,13 @@ const quantity = ref(totalQuantity);
 	align-items: center;
 	justify-content: space-between;
 }
+
+@media (max-width: 53.125em) {
+	.cart-item {
+		flex-direction: column;
+		padding-inline: 1rem;
+	}
+}
 .total-price {
 	font-weight: 700;
 }
@@ -66,10 +72,23 @@ const quantity = ref(totalQuantity);
 	align-items: center;
 	width: 50%;
 }
+@media (max-width: 53.125em) {
+	.product {
+		width: 100%;
+		margin-bottom: 1.5rem;
+	}
+}
 .cart-item .img {
 	width: 8rem;
 	margin-left: 2rem;
 	cursor: pointer;
+}
+@media (max-width: 25.0625rem) {
+	.cart-item .img {
+		width: 7rem;
+		margin-left: 1rem;
+		cursor: pointer;
+	}
 }
 .caption {
 	margin-left: 1.5rem;
@@ -104,5 +123,10 @@ button {
 	align-items: center;
 	width: 50%;
 	justify-content: space-between;
+}
+@media (max-width: 53.125em) {
+	.details {
+		width: 100%;
+	}
 }
 </style>

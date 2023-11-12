@@ -1,15 +1,51 @@
 <template>
 	<div class="account-wrapper">
-		<form>
+		<div v-if="user">
+			<h2>You Are In!</h2>
+
+			<div class="buttons">
+				<button :disabled="logOutPending" @click="LogOut" class="logout">
+					<Spinner v-if="logOutPending" />
+					<span v-else>LogOut</span>
+				</button>
+				<NuxtLink to="/shop?page=1" class="shopping">Go Shopping</NuxtLink>
+			</div>
+		</div>
+
+		<form v-else @submit.prevent="LogIn">
 			<h2>Login</h2>
-			<label for="email">E-mail</label>
+			<label :class="{ red: formErrors.email }" for="email">{{
+				formErrors.email
+					? "email provided is not valid please another one"
+					: "E-mail"
+			}}</label>
 
-			<input type="email" name="email" id="email" />
+			<input
+				:class="{ 'border-error': formErrors.email }"
+				v-model="email"
+				type="email"
+				name="email"
+				id="email"
+			/>
 
-			<label for="password">Password</label>
+			<label :class="{ red: formErrors.password }" for="password">{{
+				formErrors.password
+					? "password should be 6 characters long"
+					: "password"
+			}}</label>
 
-			<input autocomplete="on" type="password" name="password" id="password" />
-			<button class="login-button" type="submit">Login</button>
+			<input
+				:class="{ 'border-error': formErrors.password }"
+				v-model="password"
+				autocomplete="on"
+				type="password"
+				name="password"
+				id="password"
+			/>
+			<button :disabled="pending" class="login-button" type="submit">
+				<Spinner v-if="pending" />
+				<span v-else>Login</span>
+			</button>
 			<div class="wrapper">
 				<div class="checkbox">
 					<label for="checkbox">Remember me</label>
@@ -19,9 +55,8 @@
 					Forgot Password?
 				</NuxtLink>
 			</div>
-			<button class="google-button" type="submit">
-				<GoogleIcon />
-				<span class="ms-2"> Connect with Google</span>
+			<button @click="singInWithGoogle" type="button" class="google-button">
+				<div><GoogleIcon /> <span class="ms-2"> Connect with Google</span></div>
 			</button>
 			<div class="create-account-link">
 				<span>New here?</span>
@@ -32,10 +67,69 @@
 		</form>
 	</div>
 </template>
+<script setup>
+const email = ref("");
+const password = ref("");
+const pending = ref(false);
+const user = useSupabaseUser();
+const logOutPending = useLogOutPending();
+const supabase = useSupabaseClient();
+function isValidEmail(email) {
+	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	return emailRegex.test(email);
+}
+const formErrors = reactive({
+	email: false,
+	password: false,
+});
 
+watch(email, () => {
+	if (email.value === "") {
+		formErrors.email = false;
+		return;
+	}
+	formErrors.email = !isValidEmail(email.value);
+});
+watch(password, () => {
+	if (password.value === "") {
+		formErrors.password = false;
+		return;
+	}
+	formErrors.password = password.value.length < 6;
+});
+async function LogIn() {
+	pending.value = true;
+	const { error } = await supabase.auth.signInWithPassword({
+		email: email.value.trim(),
+		password: password.value,
+	});
+
+	if (error) {
+		alert(error?.message);
+	}
+	pending.value = false;
+	await refreshNuxtData();
+}
+const LogOut = async () => {
+	logOutPending.value = true;
+	const { error } = await supabase.auth.signOut();
+	if (error) {
+		logOutPending.value = false;
+		return;
+	}
+	logOutPending.value = false;
+	await refreshNuxtData();
+};
+async function singInWithGoogle() {
+	const { data } = await supabase.auth.signInWithOAuth({
+		provider: "google",
+	});
+}
+</script>
 <style scoped>
 h2 {
-	margin-bottom: 1rem;
+	margin-bottom: 2rem;
+	text-align: center;
 }
 .account-wrapper {
 	display: flex;
@@ -63,7 +157,6 @@ form {
 	form {
 		width: 100%;
 		padding-inline: 1.25rem;
-
 	}
 }
 @media (max-width: 28.625rem) {
@@ -102,15 +195,31 @@ form button {
 .login-button {
 	background: black;
 	color: white;
+	border: 0;
 }
+
+.login-button:disabled {
+	background: rgb(219, 219, 219);
+	color: rgb(104, 104, 104);
+	cursor: not-allowed;
+}
+.red {
+	color: red;
+}
+.border-error {
+	border: 1px solid red !important;
+}
+
 .google-button {
+	background: 0;
+	border: 1px solid black;
+	padding: 0.75rem 0;
+}
+.google-button div {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	gap: 0.5rem;
-	background: 0;
-	border: 1px solid black;
-	padding: 0.75rem 0;
 }
 
 form .checkbox {
@@ -123,8 +232,8 @@ form .checkbox label {
 	margin: 0;
 	user-select: none;
 }
-@media(max-width:25em){
-	 label{
+@media (max-width: 25em) {
+	label {
 		font-size: 0.9rem;
 	}
 }
@@ -146,8 +255,8 @@ form .link {
 	font-weight: 700;
 	cursor: pointer;
 }
-@media(max-width:25em){
-	form .link{
+@media (max-width: 25em) {
+	form .link {
 		font-size: 0.9rem;
 	}
 }
@@ -155,5 +264,34 @@ form .link {
 	margin-right: 0.25rem;
 	font-weight: 400;
 	color: rgb(61, 61, 61);
+}
+.logout {
+	all: unset;
+	border: 1px solid black;
+	height: 50px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 200px;
+}
+.logout:disabled {
+	cursor: not-allowed;
+	opacity: 0.55;
+}
+.buttons {
+	display: flex;
+	gap: 1rem;
+}
+.shopping {
+	all: unset;
+	background: black;
+	height: 50px;
+	cursor: pointer;
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 200px;
 }
 </style>

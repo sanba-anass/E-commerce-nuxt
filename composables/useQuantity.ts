@@ -1,2 +1,2 @@
-export const useQuantity = (totalQuantity: number) =>
-	useState(() => totalQuantity);
+export const useQuantity = () =>
+	useState(() => 0);

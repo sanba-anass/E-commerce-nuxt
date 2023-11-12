@@ -70,9 +70,10 @@
 			>d<span>r</span>ess do<span>w</span>n
 		</NuxtLink>
 		<div class="nav-icon-links">
-			<NuxtLink @click="isVisible = false" to="/wishlist"
-				><HeartIcon
-			/></NuxtLink>
+			<NuxtLink class="cart-button" @click="isVisible = false" to="/wishlist"
+				><HeartIcon />
+				<Badge :num="(allWishlist?.count as number)" />
+			</NuxtLink>
 			<NuxtLink @click="isVisible = false" to="/account/login"
 				><AccountIcon
 			/></NuxtLink>
@@ -85,6 +86,7 @@
 				><SearchIcon
 			/></NuxtLink>
 			<NuxtLink
+				class="cart-button"
 				:class="{ disableIconLink: pending }"
 				@click="
 					() => {
@@ -95,8 +97,9 @@
 						isVisible = false;
 					}
 				"
-				><CartIcon :class="{ disableIconLink: pending }"
-			/></NuxtLink>
+				><CartIcon :class="{ disableIconLink: pending }" />
+				<Badge :num="(allOrderItems?.count as number)" />
+			</NuxtLink>
 		</div>
 	</nav>
 	<BigMenu
@@ -268,7 +271,13 @@ const searchTerm = ref(route.query?.q?.split(" ").join(" or "));
 const isVisibleSearchMenu = ref(false);
 const searchPending = ref(false);
 const supabase = useSupabaseClient();
-const closeMenu = async (item:string)=>{
+const { data: allOrderItems } = await useAsyncData(
+	async () => await supabase.from("order_item").select("*", { count: "exact" })
+);
+const { data: allWishlist } = await useAsyncData(
+	async () => await supabase.from("wishlist").select("*", { count: "exact" })
+);
+const closeMenu = async (item: string) => {
 	searchPending.value = true;
 	await router.replace(`/shop?page=1&q=${item}`);
 	const { data } = await supabase
@@ -282,7 +291,7 @@ const closeMenu = async (item:string)=>{
 	products.value = data;
 	searchPending.value = false;
 	isVisibleSearchMenu.value = false;
-}
+};
 const searchWords = computed(() =>
 	searchTerm.value
 		?.split(" ")
@@ -618,6 +627,10 @@ figcaption {
 	gap: 3rem;
 	height: fit-content;
 	margin-right: 15rem;
+}
+.cart-button {
+	position: relative;
+	display: inline-block;
 }
 .none {
 	display: none;

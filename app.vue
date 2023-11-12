@@ -3,19 +3,45 @@
 		<NuxtLoadingIndicator color="#E6733E" />
 
 		<NavBar />
-
 		<CartDrawer />
-		<div @click="closeCartDrawer" v-if="isDrawerOpen" class="overlay"></div>
+		<Dialog />
+		<ProductDrawer v-if="productId" :product="currentProduct2" />
+		<div
+			@click="
+				closeCartDrawer();
+				closeProductDrawer();
+			"
+			v-if="isDrawerOpen || _isDrawerOpen"
+			class="overlay"
+		></div>
 		<NuxtPage />
+
+		<Toast
+			v-if="currentProduct"
+			:title="currentProduct?.title"
+			:image-url="currentProduct?.preview_images[0]"
+			text="Go to wishlist"
+			:duration="25"
+		/>
 
 		<Footer />
 	</NuxtLayout>
 </template>
 <script setup>
 const { isDrawerOpen, closeCartDrawer } = useOpenCartDrawer();
+const { toastId } = useToast(30);
+const { productId } = useProductDrawer();
+const products = useProductList();
+const { isDrawerOpen: _isDrawerOpen, closeProductDrawer } = useProductDrawer();
+const currentProduct = computed(() =>
+	products.value.find((product) => product.id === toastId.value)
+);
+
+const currentProduct2 = computed(() =>
+	products.value.find((product) => product.id === productId.value)
+);
 </script>
 <style>
-
 * {
 	padding: 0;
 	margin: 0;

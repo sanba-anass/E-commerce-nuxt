@@ -11,14 +11,17 @@
 					/>
 				</div>
 				<div class="small-images">
-					<NuxtImg
-						loading="lazy"
-						class="small-img"
-						v-for="(image, index) in productImagesDetail"
-						:src="image.url"
+					<div
 						:class="{ isActiveImg: image.isActive }"
-						@click="setActiveImg(index)"
-					/>
+						v-for="(image, index) in productImagesDetail"
+						class="small-img"
+					>
+						<NuxtImg
+							loading="lazy"
+							:src="image.url"
+							@click="setActiveImg(index)"
+						/>
+					</div>
 				</div>
 			</div>
 			<div class="product-details">
@@ -285,7 +288,18 @@ textarea:focus {
 
 .small-images {
 	display: flex;
-	gap: 1rem;
+	gap: 1.25rem;
+}
+.small-img {
+	cursor: pointer;
+	transition: opacity 300ms;
+	opacity: 0.5;
+	width: 120px;
+	height: 150px;
+}
+.small-img img {
+	width: 100%;
+	max-height: 100%;
 }
 .product-details {
 	width: 50%;
@@ -323,13 +337,6 @@ textarea:focus {
 	margin-bottom: 2rem;
 }
 
-.small-img {
-	flex: 1;
-	width: 16%;
-	cursor: pointer;
-	transition: opacity 300ms;
-	opacity: 0.5;
-}
 .isActiveImg {
 	opacity: 1;
 }
@@ -398,20 +405,19 @@ const isSelectingImg = ref(false);
 const queryId: string = route.query.id as string;
 
 const supabase = useSupabaseClient();
+const { open } = useToast(30);
 
 const { data: currentProduct } = await useAsyncData(async () => {
 	return await supabase.from("product").select("*").eq("id", queryId);
-});
-
-console.log(currentProduct.value);
+}, {});
 
 if (!currentProduct.value) {
 	throw createError({
 		statusCode: 404,
 		statusMessage: "Not Found",
+		fatal: true,
 	});
 }
-
 const productImagesDetail = ref(
 	//@ts-ignore
 	currentProduct.value.data[0].detail_images.map(
@@ -444,9 +450,17 @@ const setActiveImg = (index: number) => {
 };
 const { openCartDrawer } = useOpenCartDrawer();
 const pending = useAddCartPending();
-
+const { toastId, isFavouriteItem } = useToast(30);
+const { openDialog } = useDialog();
+const user = useSupabaseUser();
 async function addOrderItem() {
+	if (!user.value) {
+		openDialog("info", "please login to perform this action");
+
+		return;
+	}
 	pending.value = true;
+
 	const { data: orderItems } = await supabase.from("order_item").select("*");
 
 	const productToInserted = orderItems?.find(
@@ -472,15 +486,19 @@ async function addOrderItem() {
 
 		await refreshNuxtData();
 		pending.value = false;
-		openCartDrawer();
+
 		return;
 	}
+	open();
 	const { data: currentProduct } = await supabase
 		.from("product")
 		.select("*")
 		.eq("id", queryId);
 
 	//@ts-ignore
+
+	isFavouriteItem.value = false;
+	toastId.value = currentProduct[0].id;
 	await supabase.from("order_item").insert({
 		product_id: currentProduct[0].id,
 		total_quantity: quantity.value,
@@ -503,7 +521,6 @@ async function addOrderItem() {
 	console.log(currentProduct);
 	await refreshNuxtData();
 	pending.value = false;
-	openCartDrawer();
 }
 onUnmounted(() => {
 	clearTimeout(id);

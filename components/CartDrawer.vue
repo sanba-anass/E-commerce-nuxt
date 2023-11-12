@@ -3,7 +3,7 @@
 		<header>
 			<h2>Cart</h2>
 			<button @click="closeCartDrawer">
-				<CloseIcon />
+				<CloseIcon :color="'black'" />
 			</button>
 		</header>
 		<main class="cart-content">
@@ -28,7 +28,7 @@
 				<div class="text-center" v-else>No products in the cart.</div>
 			</div>
 			<div class="buttons">
-				<NuxtLink class="checkout">Checkout</NuxtLink>
+				<NuxtLink to="/checkout" class="checkout">Checkout</NuxtLink>
 				<NuxtLink to="/shop/cart" class="view-cart">View Cart</NuxtLink>
 			</div>
 		</main>
@@ -39,7 +39,11 @@
 const supabase = useSupabaseClient();
 
 const { data: orderItems } = await useAsyncData(
-	async () => await supabase.from("order_item").select("*")
+	async () =>
+		await supabase
+			.from("order_item")
+			.select("*")
+			.order("created_at", { ascending: false })
 );
 const { closeCartDrawer, isDrawerOpen } = useOpenCartDrawer();
 
@@ -96,9 +100,9 @@ header::before {
 	transition: 0.5s transform;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 26.3125em) {
 	.cart-drawer {
-		width: 75%;
+		width: 85%;
 	}
 }
 .open {

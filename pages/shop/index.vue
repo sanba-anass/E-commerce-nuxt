@@ -55,11 +55,6 @@
 </template>
 
 <script setup lang="ts">
-// definePageMeta({
-// 	middleware: ["change-page"],
-// 	// or middleware: 'auth'
-// });
-
 import { Grid2Icon } from "#components";
 import { Grid3Icon } from "#components";
 
@@ -343,6 +338,7 @@ function openDrawer() {
 function closeDrawer() {
 	isOpen.value = false;
 	document.body.style.overflow = "visible";
+	console.log(route.fullPath);
 }
 if (process.client) {
 	const match = window.matchMedia("(min-width: 51.875em)");
@@ -376,18 +372,14 @@ if (process.client) {
 		match.removeEventListener("change", switchTo2Columns);
 	});
 }
-watch(
-	() => route.fullPath,
-	() => {
-		if (!route.query.page) {
-			throw createError({
-				statusCode: 404,
-				statusMessage: "Not Found",
-			});
-		}
-	},
-	{ deep: true, immediate: true }
-);
+
+if (!route.query.page) {
+	throw createError({
+		statusCode: 404,
+		statusMessage: "Not Found",
+		fatal: true,
+	});
+}
 </script>
 
 <style scoped>

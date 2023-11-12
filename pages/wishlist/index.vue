@@ -60,7 +60,6 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ keepalive: false });
 const { openCartDrawer } = useOpenCartDrawer();
 const supabase = useSupabaseClient();
 const isDeletingAllPending = ref(false);

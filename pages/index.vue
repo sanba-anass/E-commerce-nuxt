@@ -109,14 +109,7 @@ const selected = ref("Featured");
 const supabase = useSupabaseClient();
 const _products = useProductList();
 const route = useRoute();
-const { data: products } = await useAsyncData(async () => {
-	return await supabase
-		.from("product")
-		.select("*")
-		.eq("category", "Featured Products")
-		.limit(4);
-});
-_products.value = products.value?.data;
+
 watch(
 	() => route.fullPath,
 	() => {

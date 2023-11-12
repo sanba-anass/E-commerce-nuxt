@@ -6,6 +6,7 @@
 					:to="`/shop/${title.split(' ').join('-')}?page=${1}&id=${id}`"
 				>
 					<NuxtImg
+						placeholder="images/placeholder.svg"
 						loading="lazy"
 						:src="!switchImage ? url1 : url2"
 					/>
@@ -25,12 +26,22 @@
 						<RightArrow />
 					</button>
 				</div>
-				<button class="shop-button">Quick Shop</button>
+				<button
+					@click="
+						openProductDrawer();
+						productId = id;
+						ScrollToTop();
+					"
+					class="shop-button"
+				>
+					Quick Shop
+				</button>
 				<FavouriteButton :id="id" />
 			</div>
 		</div>
 		<div class="slider-item-content">
 			<NuxtLink
+				@click="closeProductDrawer"
 				:to="`/shop/${title.split(' ').join('-')}?page=${1}&id=${id}`"
 				class="title"
 				>{{ title }}</NuxtLink
@@ -64,6 +75,8 @@ interface Props {
 }
 
 const { url1, url2, title, price, oldPrice, id, rating } = defineProps<Props>();
+const { productId, openProductDrawer, closeProductDrawer } = useProductDrawer();
+const { ScrollToTop } = useScrollToTop();
 </script>
 
 <style scoped>

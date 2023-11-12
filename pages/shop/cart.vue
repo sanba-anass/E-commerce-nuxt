@@ -1,7 +1,7 @@
 <template>
 	<div class="container">
 		<h2>SHOPPING CART</h2>
-		<EmptyCart v-if="orderItems.data?.length === 0" />
+		<EmptyCart v-if="orderItems?.data?.length === 0" />
 		<main v-else class="cart-content">
 			<div class="items">
 				<header class="header1">
@@ -29,7 +29,9 @@
 				</ul>
 				<div class="buttons">
 					<NuxtLink class="checkout">Procced To Checkout</NuxtLink>
-					<NuxtLink to="/" class="shopping">Continue Shopping</NuxtLink>
+					<NuxtLink to="/shop?page=1" class="shopping"
+						>Continue Shopping</NuxtLink
+					>
 				</div>
 			</div>
 			<div class="pay">
@@ -38,9 +40,10 @@
 				<div class="pay-card">
 					<div class="text1">
 						<div class="title">TOTAL:</div>
-						<div class="total-price-all-order-items">
-							${{ order?.data[0].total_order_price.toFixed(2) }}
+						<div v-if="!pending" class="total-price-all-order-items">
+							${{ allOrderItemsTotalPrice?.toFixed(2) }}
 						</div>
+						<Spinner class="m0" v-else />
 					</div>
 					<div class="text2">
 						<div class="title">SHIPPING:</div>
@@ -48,8 +51,15 @@
 							Shipping & taxes calculated at checkout
 						</div>
 					</div>
-					<div class="free-shipping-message">
+					<div
+						v-if="allOrderItemsTotalPrice!>=500"
+						class="free-shipping-message"
+					>
 						CONGRATULATIONS! YOU'VE GOT FREE SHIPPING!
+					</div>
+					<div class="spend-message" v-else>
+						SPEND
+						<span>${{ priceRemainForFreeShipping }}</span> FOR FREE SHIPPING
 					</div>
 					<div class="free-shipping-message2">
 						Free shipping for any orders above <span>$500.00</span>
@@ -66,16 +76,24 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+	keepalive: false,
+});
 const supabase = useSupabaseClient();
-const { data: orderItems } = await useAsyncData(
-	async () => await supabase.from("order_item").select("*")
-);
-const { data: order } = await useAsyncData(
-	async () => await supabase.from("order").select("*")
-);
 
-
-console.log(orderItems.value?.data);
+const { data: orderItems, pending } = await useAsyncData(
+	async () => await supabase.from("order_item").select("*").order("created_at")
+);
+const allOrderItemsTotalPrice = computed(() =>
+	orderItems.value?.data.reduce(
+		(accumulator, order) => accumulator + order.total_quantity * order.price,
+		0
+	)
+);
+const priceForFreeShipping = 500.0;
+const priceRemainForFreeShipping = computed(() =>
+	(priceForFreeShipping - allOrderItemsTotalPrice?.value!).toFixed(2)
+);
 </script>
 
 <style scoped>
@@ -83,6 +101,14 @@ console.log(orderItems.value?.data);
 	background-color: rgb(243, 243, 243);
 	padding-block: 1rem;
 	border: 1px solid #e0e0e0;
+}
+@media (max-width: 53.125em) {
+	.header1 .product:first-child {
+		display: none;
+	}
+	.header1 ul {
+		padding-inline: 1rem;
+	}
 }
 h2 {
 	text-align: center;
@@ -98,8 +124,20 @@ h2 {
 	display: flex;
 	gap: 1rem;
 }
+@media (max-width: 71.875em) {
+	.cart-content {
+		flex-direction: column;
+		gap: 3rem;
+		width: 100%;
+	}
+}
 .items {
 	width: 70%;
+}
+@media (max-width: 71.875em) {
+	.items {
+		width: 100%;
+	}
 }
 .items .header1 ul li {
 	text-align: center;
@@ -110,7 +148,11 @@ h2 {
 	justify-content: space-between;
 	padding-inline: 2rem;
 }
-
+@media (max-width: 53.125em) {
+	.items .header1 ul {
+		padding-inline: 1rem;
+	}
+}
 .items .header1 ul li {
 	font-weight: 700;
 	text-transform: uppercase;
@@ -121,10 +163,25 @@ h2 {
 	justify-content: space-between;
 	width: 50%;
 }
+@media (max-width: 53.125em) {
+	.last-3 {
+		width: 100%;
+	}
+}
 .buttons {
 	gap: 1.5rem;
 	display: flex;
 }
+@media (max-width: 26.875em) {
+	.buttons {
+		flex-direction: column;
+		gap: 1rem;
+	}
+	.buttons > * {
+		width: 100% !important;
+	}
+}
+
 .checkout {
 	background: black;
 	width: 50%;
@@ -158,11 +215,17 @@ h2 {
 	align-self: flex-start;
 	width: 30%;
 }
-
+@media (max-width: 71.875em) {
+	.pay {
+		width: 100%;
+		align-self: auto;
+	}
+}
 .pay-card {
 	background-color: rgb(248, 248, 248);
 	padding: 1.5rem;
 }
+
 .header2 {
 	font-size: 0.7rem;
 	font-weight: 700;
@@ -187,6 +250,7 @@ h2 {
 	font-size: 0.85rem;
 	align-items: center;
 	margin-bottom: 3rem;
+	gap: 1rem;
 }
 .total-price-all-order-items {
 	font-size: 1.5rem;
@@ -195,6 +259,9 @@ h2 {
 	color: gray;
 	font-weight: 500;
 	font-size: 0.8rem;
+}
+.m0 {
+	margin: 0;
 }
 .free-shipping-message {
 	background-color: #0f0f0f;
@@ -211,10 +278,24 @@ h2 {
 	font-size: 0.9rem;
 	margin-bottom: 2.5rem;
 }
+.spend-message {
+	font-weight: 700;
+	font-size: 0.9rem;
+	margin-bottom: 1rem;
+}
+@media (max-width: 70.25em) {
+	.spend-message {
+		font-size: 0.8rem;
+	}
+}
+.spend-message span {
+	color: rgb(0, 177, 0);
+}
 .free-shipping-message2 span {
 	color: rgb(0, 177, 0);
 	font-weight: 700;
 }
+
 .shipping-input label {
 	font-size: 0.7rem;
 	font-weight: 700;

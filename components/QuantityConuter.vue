@@ -9,7 +9,7 @@
 			@input="updateQuantityViaInput"
 			type="number"
 			class="quantity-input"
-			v-model="quantity"
+			v-model="quan"
 		/>
 
 		<button @click="increaseQuantity"><PlusIcon /></button>
@@ -24,27 +24,16 @@ interface Props {
 
 const { productId, isCartItem } = defineProps<Props>();
 const quantity = defineModel<number>("quantity");
+const quan = ref(quantity.value);
 const supabase = useSupabaseClient();
-
 const updateTotalQuantity = async () => {
 	await supabase
 		.from("order_item")
 		.update({
-			total_quantity: quantity.value,
+			total_quantity: quan.value,
 		})
 		.eq("product_id", productId);
 
-	const { data: orderItems } = await supabase.from("order_item").select("*");
-	const total = orderItems?.reduce(
-		(total, item) => item.total_quantity * item.price + total,
-		0
-	);
-	await supabase
-		.from("order")
-		.update({
-			total_order_price: total,
-		})
-		.eq("order_title", "some");
 	await refreshNuxtData();
 };
 // const updateTotalQuantity2 = async () => {
@@ -61,21 +50,27 @@ const updateTotalQuantity = async () => {
 // };
 async function updateQuantity(action: "increase" | "decrease") {
 	//@ts-ignore
-	action === "increase" ? quantity.value++ : quantity.value--;
-	if (!isCartItem) {
-		return;
+	if (action === "increase") {
+		quan.value++;
+		quantity.value++;
+	} else {
+		quan.value--;
+		quantity.value--;
 	}
-	await updateTotalQuantity();
+	console.log(quan.value);
+	if (isCartItem) {
+		updateTotalQuantity();
+	}
 }
 async function increaseQuantity() {
-	await updateQuantity("increase");
+	updateQuantity("increase");
 }
 async function decreaseQuantity() {
 	//@ts-ignore
 	if (quantity.value === 1) {
 		return;
 	}
-	await updateQuantity("decrease");
+	updateQuantity("decrease");
 }
 
 async function updateQuantityViaInput(event: Event) {
@@ -87,10 +82,9 @@ async function updateQuantityViaInput(event: Event) {
 	//@ts-ignore
 
 	quantity.value = eventTarget.value;
-	if (!isCartItem) {
-		return;
+	if (isCartItem) {
+		await updateTotalQuantity();
 	}
-	await updateTotalQuantity();
 }
 function onkeydown(event: Event) {
 	const invalidChars = ["-", "+", "e"];
