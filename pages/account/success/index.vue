@@ -37,6 +37,7 @@ const LogOut = async () => {
 	align-items: center;
 	justify-content: center;
 	min-height: calc(100vh - 58px);
+	gap: 2rem;
 }
 .logout {
 	all: unset;
