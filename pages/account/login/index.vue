@@ -123,6 +123,9 @@ const LogOut = async () => {
 async function singInWithGoogle() {
 	const { data } = await supabase.auth.signInWithOAuth({
 		provider: "google",
+		options: {
+			redirectTo: "https://e-commerce-nuxt-six.vercel.app/account/login",
+		},
 	});
 }
 </script>
