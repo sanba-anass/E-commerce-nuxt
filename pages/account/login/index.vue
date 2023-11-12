@@ -72,6 +72,7 @@ const email = ref("");
 const password = ref("");
 const pending = ref(false);
 const user = useSupabaseUser();
+const router = useRouter();
 const logOutPending = useLogOutPending();
 const supabase = useSupabaseClient();
 function isValidEmail(email) {
@@ -118,13 +119,13 @@ const LogOut = async () => {
 		return;
 	}
 	logOutPending.value = false;
-	await refreshNuxtData();
 };
 async function singInWithGoogle() {
 	const { data } = await supabase.auth.signInWithOAuth({
 		provider: "google",
 		options: {
 			redirectTo: "https://e-commerce-nuxt-six.vercel.app/account/success",
+			skipBrowserRedirect: true,
 		},
 	});
 }
