@@ -1,14 +1,12 @@
 <template>
-	<div class="account-wrapper">
-		<div v-if="user">
-			<h2>You Are In!</h2>
-			<div class="buttons">
-				<button :disabled="logOutPending" @click="LogOut" class="logout">
-					<Spinner v-if="logOutPending" />
-					<span v-else>LogOut</span>
-				</button>
-				<NuxtLink to="/shop?page=1" class="shopping">Go Shopping</NuxtLink>
-			</div>
+	<div class="account-wrapper" v-if="user">
+		<h2>You Are In!</h2>
+		<div class="buttons">
+			<button :disabled="logOutPending" @click="LogOut" class="logout">
+				<Spinner v-if="logOutPending" />
+				<span v-else>LogOut</span>
+			</button>
+			<NuxtLink to="/shop?page=1" class="shopping">Go Shopping</NuxtLink>
 		</div>
 	</div>
 </template>
