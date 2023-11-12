@@ -127,6 +127,7 @@ async function singInWithGoogle() {
 			redirectTo: "https://e-commerce-nuxt-six.vercel.app/account/success",
 		},
 	});
+	await refreshNuxtData()
 }
 </script>
 <style scoped>
