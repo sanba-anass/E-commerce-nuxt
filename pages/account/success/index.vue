@@ -30,6 +30,7 @@ const LogOut = async () => {
 <style scoped>
 .account-wrapper {
 	display: flex;
+	flex-direction: column;
 	max-width: 105rem;
 	margin: 0 auto;
 	width: 100%;
