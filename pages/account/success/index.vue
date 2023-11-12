@@ -1,13 +1,14 @@
 <template>
-	<div v-if="user">
-		<h2>You Are In!</h2>
-
-		<div class="buttons">
-			<button :disabled="logOutPending" @click="LogOut" class="logout">
-				<Spinner v-if="logOutPending" />
-				<span v-else>LogOut</span>
-			</button>
-			<NuxtLink to="/shop?page=1" class="shopping">Go Shopping</NuxtLink>
+	<div class="account-wrapper">
+		<div v-if="user">
+			<h2>You Are In!</h2>
+			<div class="buttons">
+				<button :disabled="logOutPending" @click="LogOut" class="logout">
+					<Spinner v-if="logOutPending" />
+					<span v-else>LogOut</span>
+				</button>
+				<NuxtLink to="/shop?page=1" class="shopping">Go Shopping</NuxtLink>
+			</div>
 		</div>
 	</div>
 </template>
@@ -29,6 +30,15 @@ const LogOut = async () => {
 </script>
 
 <style scoped>
+.account-wrapper {
+	display: flex;
+	max-width: 105rem;
+	margin: 0 auto;
+	width: 100%;
+	align-items: center;
+	justify-content: center;
+	min-height: calc(100vh - 58px);
+}
 .logout {
 	all: unset;
 	border: 1px solid black;
