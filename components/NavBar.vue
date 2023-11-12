@@ -74,7 +74,9 @@
 				><HeartIcon />
 				<Badge :num="(allWishlist?.count as number)" />
 			</NuxtLink>
-			<NuxtLink @click="isVisible = false" to="/account/login"
+			<NuxtLink
+				@click="isVisible = false"
+				:to="user ? '/account/success' : '/account/login'"
 				><AccountIcon
 			/></NuxtLink>
 			<NuxtLink
@@ -358,6 +360,7 @@ const { data: searchCateroryItems } = await useAsyncData(
 );
 
 const { openCartDrawer } = useOpenCartDrawer();
+const user = useSupabaseUser();
 
 const isLoadingPage = ref(true);
 function overlayClose(mediaQuery: MediaQueryList | null) {
