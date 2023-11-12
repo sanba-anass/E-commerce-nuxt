@@ -27,6 +27,7 @@ const LogOut = async () => {
 	await refreshNuxtData();
 	router.push("/account/login");
 };
+onMounted(async () => await refreshNuxtData());
 </script>
 
 <style scoped>
