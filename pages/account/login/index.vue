@@ -125,7 +125,6 @@ async function singInWithGoogle() {
 		provider: "google",
 		options: {
 			redirectTo: "https://e-commerce-nuxt-six.vercel.app/account/success",
-			skipBrowserRedirect: true,
 		},
 	});
 }
