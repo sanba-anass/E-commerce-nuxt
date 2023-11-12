@@ -9,10 +9,12 @@
 			<NuxtLink to="/shop?page=1" class="shopping">Go Shopping</NuxtLink>
 		</div>
 	</div>
+	
 </template>
 
 <script setup lang="ts">
 const user = useSupabaseUser();
+const router = useRouter()
 const logOutPending = useLogOutPending();
 const supabase = useSupabaseClient();
 const LogOut = async () => {
@@ -24,6 +26,7 @@ const LogOut = async () => {
 	}
 	logOutPending.value = false;
 	await refreshNuxtData();
+	router.push('/account/login')
 };
 </script>
 
