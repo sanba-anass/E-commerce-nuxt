@@ -12,7 +12,6 @@
 </template>
 
 <script setup lang="ts">
-const user = useSupabaseUser();
 const router = useRouter();
 const logOutPending = useLogOutPending();
 const supabase = useSupabaseClient();
