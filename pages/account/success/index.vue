@@ -1,5 +1,5 @@
 <template>
-	<div class="account-wrapper" v-if="user">
+	<div class="account-wrapper">
 		<h2>You Are In!</h2>
 		<div class="buttons">
 			<button :disabled="logOutPending" @click="LogOut" class="logout">
