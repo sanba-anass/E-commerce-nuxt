@@ -61,6 +61,7 @@ import { Grid3Icon } from "#components";
 const supabase = useSupabaseClient();
 
 const count = useCount();
+const user = useSupabaseUser();
 
 const disabledAmount = ref(1);
 const route = useRoute();

@@ -7,7 +7,7 @@
 						New <span class="summer-word">Summer</span> Feels Collection</span
 					>
 				</h1>
-				<NuxtLink class="fancy">
+				<NuxtLink to="/collections/fall-winter-2023" class="fancy">
 					<span class="top-key"></span>
 					<span class="text">Discover Now</span>
 					<span class="bottom-key-1"></span>

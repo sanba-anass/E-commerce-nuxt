@@ -25,7 +25,9 @@
 				</div>
 			</div>
 			<div class="product-details">
-				<h1 class="title">{{ currentProduct.data[0]?.title }}</h1>
+				<div class="title-wrapper">
+					<h1 class="title">{{ currentProduct.data[0]?.title }}</h1>
+				</div>
 				<div class="review-flex">
 					<p class="price">${{ currentProduct.data[0]?.price.toFixed(2) }}</p>
 					<Rating :rating="currentProduct.data[0]?.rating" />
@@ -88,8 +90,6 @@
 				/>
 				<div class="add-to-wishlist">
 					<FavouriteButton :id="currentProduct.data[0]?.id" />
-
-					<NuxtLink> add to wishlist</NuxtLink>
 				</div>
 				<div class="social-section">
 					<div class="share">share:</div>
@@ -121,7 +121,7 @@
 	flex-wrap: wrap;
 }
 .social-section {
-	margin-top: 5rem;
+	margin-top: 3rem;
 	align-items: center;
 	gap: 6.5rem;
 }
@@ -162,9 +162,6 @@ input::-webkit-inner-spin-button {
 }
 .add-to-wishlist {
 	margin-top: 3rem;
-	align-items: center;
-	display: flex;
-	gap: 1rem;
 }
 .add-to-wishlist * {
 	position: static;
@@ -317,9 +314,17 @@ textarea:focus {
 		width: 95%;
 	}
 }
+.title-wrapper {
+	margin-bottom: 1.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+.title-wrapper .add-to-wishlist {
+}
+
 .product-details .title {
 	font-size: 1.75rem;
-	margin-bottom: 1.5rem;
 }
 @media (max-width: 34.375em) {
 	.product-details .title {

@@ -110,6 +110,9 @@ async function LogIn() {
 	}
 	pending.value = false;
 	await refreshNuxtData();
+	await supabase.from("user_ids").upsert({
+		user_id: user.value.id,
+	});
 }
 const LogOut = async () => {
 	logOutPending.value = true;

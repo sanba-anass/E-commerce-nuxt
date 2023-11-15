@@ -54,7 +54,7 @@
 							: "password"
 					}}</label>
 					<input
-						:class="{ 'error-border': formErrors.email }"
+						:class="{ 'error-border': formErrors.password }"
 						required
 						v-model="password"
 						autocomplete="new-password"
@@ -198,7 +198,11 @@ const createAccount = async () => {
 	}
 	pending.value = false;
 	await refreshNuxtData();
+	await supabase.from("user_ids").upsert({
+		user_id: user.value.id,
+	});
 };
+
 const LogOut = async () => {
 	logOutPending.value = true;
 	const { error } = await supabase.auth.signOut();
@@ -219,6 +223,11 @@ h2 {
 	display: flex;
 	gap: 1rem;
 	width: 100%;
+}
+@media (max-width: 38.75rem) {
+	.password-inputs {
+		display: block;
+	}
 }
 .password-inputs input {
 	width: 100%;
@@ -258,8 +267,8 @@ form {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	width: 500px;
 	position: relative;
+	width: 550px;
 }
 
 @media (max-width: 34.9375em) {
@@ -279,6 +288,11 @@ form label {
 	font-weight: 500;
 	display: block;
 	white-space: nowrap;
+}
+@media (max-width: 37.5em) {
+	form label {
+		white-space: initial;
+	}
 }
 form input {
 	padding: 0.65rem 1rem;

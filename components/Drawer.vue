@@ -6,10 +6,13 @@
 					class="search-input"
 					type="text"
 					name=""
+					v-model="searchTerm"
 					id=""
 					placeholder="Search for..."
 				/>
-				<SearchIcon class="search-icon" />
+				<button class="search-icon" @click="() => searchProductByTitle()">
+					<SearchIcon />
+				</button>
 			</div>
 			<ul>
 				<li>
@@ -124,6 +127,9 @@
 				<li>
 					<NuxtLink to="/account/login">Account</NuxtLink>
 				</li>
+				<li>
+					<NuxtLink to="/wishlist">wishlist</NuxtLink>
+				</li>
 			</ul>
 		</nav>
 		<ul class="social-links">
@@ -135,11 +141,70 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const iscollabsbledShop = ref(true);
 const iscollabsbledCollections = ref(true);
 const discover = ref(false);
 const catigories = ref(false);
+
+const products = useProductList();
+const route = useRoute();
+const router = useRouter();
+const searchTerm = ref(route.query?.q?.split(" ").join(" or "));
+const supabase = useSupabaseClient();
+const { closeNavDrawer } = useNavDrawer();
+
+// const closeMenu = async (item: string) => {
+// 	searchPending.value = true;
+// 	await router.replace(`/shop?page=1&q=${item}`);
+// 	const { data } = await supabase
+// 		.from("product")
+// 		.select()
+// 		.textSearch("brand", item, {
+// 			type: "websearch",
+// 			config: "english",
+// 		});
+
+// 	products.value = data;
+// 	searchPending.value = false;
+// 	isVisibleSearchMenu.value = false;
+// };
+const searchWords = computed(() =>
+	searchTerm.value
+		?.split(" ")
+		?.map((word, index, arr) =>
+			index === arr.length - 1 ? word : `${word} or`
+		)
+		?.join(" ")
+		?.trim()
+);
+
+const searchProductByTitle = async (execute = true) => {
+	if (searchTerm.value === "" && execute) {
+		alert("search term can not be empty");
+		return;
+	}
+	await router.replace(
+		`/shop?page=1&q=${searchWords.value?.split("or ").join("")}`
+	);
+	const { data } = await supabase
+		.from("product")
+		.select()
+		.textSearch("title", route.query?.q?.split(" ").join(" or "), {
+			type: "websearch",
+			config: "english",
+		});
+
+	products.value = data;
+	closeNavDrawer()
+	
+};
+
+if (route.query?.q !== undefined && route.query?.q !== "") {
+	searchProductByTitle(false);
+} else if (route.query?.q === "") {
+	products.value.length = 0;
+}
 </script>
 
 <style scoped>
@@ -160,6 +225,13 @@ const catigories = ref(false);
 	top: 0.5rem;
 	width: 1rem;
 	height: 1rem;
+	display: flex;
+	align-self: center;
+	justify-content: center;
+	background: 0;
+	border: 0;
+}
+.search-icon > * {
 	color: white;
 }
 .search-input:focus {

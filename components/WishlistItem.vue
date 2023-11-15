@@ -1,8 +1,10 @@
 <template>
 	<div class="item">
 		<div class="product">
-			<NuxtLink :to="`/shop/${title.split(' ').join('-')}?id=${productId}`"
-				><NuxtImg class="img" :src="image"
+			<NuxtLink
+				class="img"
+				:to="`/shop/${title.split(' ').join('-')}?id=${productId}`"
+				><NuxtImg :src="image"
 			/></NuxtLink>
 
 			<div class="product-text">
@@ -74,7 +76,12 @@ async function deleteWishlistItem() {
 	padding-bottom: 1.75rem;
 	margin-bottom: 1.75rem;
 }
-.not-allowed{
+@media (max-width: 40em) {
+	.item {
+		gap: 1.25rem;
+	}
+}
+.not-allowed {
 	cursor: not-allowed;
 	opacity: 0.5;
 }
@@ -82,22 +89,35 @@ async function deleteWishlistItem() {
 	width: 40%;
 	text-align: start;
 }
+
 .buttons,
 .price {
 	width: 30%;
 }
+
 .price {
 	font-weight: bold;
 }
 .img {
 	width: 7rem;
+	flex-shrink: 0;
 }
-
+@media (max-width: 40em) {
+	.img {
+		width: 5.75rem;
+	}
+}
 .product {
 	display: flex;
 	align-items: center;
 	gap: 1.5rem;
 	text-align: start;
+}
+@media (max-width: 40em) {
+	.product {
+		flex-direction: column;
+		align-items: flex-start;
+	}
 }
 .product .sku {
 	font-size: 0.8rem;
@@ -109,7 +129,6 @@ async function deleteWishlistItem() {
 	margin-bottom: 0.25rem;
 	display: inline-block;
 	text-decoration: none;
-
 	cursor: pointer;
 }
 .product .title:hover {
@@ -118,9 +137,9 @@ async function deleteWishlistItem() {
 .buttons {
 	display: flex;
 	gap: 1rem;
-	margin-left: auto;
 	justify-content: flex-end;
 }
+
 button {
 	font-size: 1rem;
 	background: 0;
@@ -130,5 +149,13 @@ button {
 	width: 3rem;
 	height: 3rem;
 	border: 1px solid #eee;
+	flex-shrink: 0;
+}
+@media (max-width: 40em) {
+	button {
+		width: auto;
+		height: 0;
+		border: 0;
+	}
 }
 </style>

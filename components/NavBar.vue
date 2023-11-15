@@ -77,8 +77,8 @@
 			<NuxtLink
 				@click="isVisible = false"
 				:to="user ? '/account/success' : '/account/login'"
-				><AccountIcon
-			/></NuxtLink>
+				><AccountIcon />
+			</NuxtLink>
 			<NuxtLink
 				class="nav-icon-search"
 				@click="
@@ -216,23 +216,33 @@
 
 			<div class="content">
 				<p class="title">What Are You Looking For?</p>
-				<div class="input">
+				<form @submit.prevent="searchProductByTitle()" class="input">
 					<input
 						v-model.trim="searchTerm"
-						type="text"
+						type="text	"
 						name=""
 						id=""
 						placeholder="Search for..."
 					/>
-					<button
-						:disabled="searchPending"
-						@click="searchProductByTitle"
-						class="search-button"
-					>
-						<SearchIcon v-if="!searchPending" />
-						<Spinner v-else />
-					</button>
-				</div>
+					<div class="search-buttons">
+						<button
+							@click="searchTerm = ''"
+							v-if="searchTermFilled"
+							type="button"
+							class="search-button"
+						>
+							<CloseIcon />
+						</button>
+						<button
+							type="submit"
+							:disabled="searchPending"
+							class="search-button"
+						>
+							<SearchIcon v-if="!searchPending" />
+							<Spinner v-else />
+						</button>
+					</div>
+				</form>
 				<div class="trending-searches">
 					<div class="title">trending searches:</div>
 					<div class="tags">
@@ -270,6 +280,7 @@ const products = useProductList();
 const route = useRoute();
 const router = useRouter();
 const searchTerm = ref(route.query?.q?.split(" ").join(" or "));
+const searchTermFilled = computed(() => searchTerm?.value?.length > 0);
 const isVisibleSearchMenu = ref(false);
 const searchPending = ref(false);
 const supabase = useSupabaseClient();
@@ -386,11 +397,7 @@ onBeforeMount(() => {
 });
 const isVisible = ref(false);
 const isCollection = ref(false);
-const isOpen = ref(false);
-const toggleDrawer = () => {
-	isOpen.value = !isOpen.value;
-	document.body.style.overflow = isOpen.value ? "hidden" : "visible";
-};
+const { isOpen, toggleDrawer } = useNavDrawer();
 </script>
 
 <style scoped>
@@ -441,6 +448,11 @@ const toggleDrawer = () => {
 	opacity: 1;
 	pointer-events: all;
 	transform: translateY(0%);
+}
+.search-buttons {
+	display: flex;
+	gap: 1.25rem;
+	transform: scale(0.9);
 }
 
 .close-button {

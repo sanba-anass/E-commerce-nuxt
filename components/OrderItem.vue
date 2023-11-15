@@ -46,6 +46,7 @@ const { title, price, image, productId } = defineProps<Props>();
 	width: 5rem;
 	cursor: pointer;
 }
+
 .title {
 	font-weight: bold;
 	font-size: 0.9rem;
@@ -53,6 +54,11 @@ const { title, price, image, productId } = defineProps<Props>();
 	display: inline-block;
 	margin-bottom: 0.5rem;
 	text-decoration: none;
+}
+@media (max-width: 26em) {
+	.title {
+		font-size: 0.8rem;
+	}
 }
 .title:hover {
 	text-decoration: underline;

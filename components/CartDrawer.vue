@@ -100,9 +100,9 @@ header::before {
 	transition: 0.5s transform;
 }
 
-@media (max-width: 26.3125em) {
+@media (max-width: 26em) {
 	.cart-drawer {
-		width: 85%;
+		width: 19rem;
 	}
 }
 .open {

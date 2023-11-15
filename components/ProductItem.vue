@@ -28,8 +28,11 @@
 				</div>
 				<button
 					@click="
-						openProductDrawer();
 						productId = id;
+						favId = id;
+						console.log(id)
+						openProductDrawer();
+
 						ScrollToTop();
 					"
 					class="shop-button"
@@ -75,7 +78,8 @@ interface Props {
 }
 
 const { url1, url2, title, price, oldPrice, id, rating } = defineProps<Props>();
-const { productId, openProductDrawer, closeProductDrawer } = useProductDrawer();
+const { productId, openProductDrawer, closeProductDrawer, favId } =
+	useProductDrawer();
 const { ScrollToTop } = useScrollToTop();
 </script>
 

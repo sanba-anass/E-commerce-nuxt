@@ -1,0 +1,9 @@
+Enable edit for users based on user_id
+in our table we have user_id = null
+but out user have user_id = 
+
+the table should be owned by  the user who logged in now 
+- we should reset is_Favourite everytime we have a 
+new user.value.id which is not in the userIDS TABLE
+
+

@@ -242,30 +242,34 @@ header {
 	margin-bottom: 1.75rem;
 }
 .buttons {
-	width: fit-content;
-	margin-left: auto;
-	align-items: center;
-	display: flex;
 	gap: 1rem;
-	width: 40%;
-	height: 45px;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
 }
+
 .buttons .add {
 	background: black;
-	padding: 0.75rem 3rem;
 	color: white;
-	font-weight: bold;
 	border: 0;
-	width: 50%;
-	height: 100%;
+	font-weight: bold;
+	display: inline-block;
+	padding: 1rem 2rem;
 }
 .buttons .delete {
 	background: 0;
-	padding: 0.75rem 3rem;
+	border: 1px solid #dadada;
 	color: rgb(24, 24, 24);
 	font-weight: bold;
-	border: 1px solid #dadada;
-	width: 50%;
-	height: 100%;
+	display: inline-block;
+	padding: 1rem 2rem;
+}
+@media (max-width: 400px) {
+	.buttons {
+		flex-direction: column-reverse;
+	}
+	.buttons > * {
+		width: 100%;
+	}
 }
 </style>

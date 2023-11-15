@@ -77,7 +77,7 @@
 				</div>
 				<PayPalButton />
 				<div class="add-to-wishlist">
-					<FavouriteButton :id="product?.id" />
+					<FavouriteButton :id="favId" />
 
 					<NuxtLink> add to wishlist</NuxtLink>
 				</div>
@@ -105,6 +105,7 @@ interface Props {
 const { product } = defineProps<Props>();
 
 const { closeProductDrawer, isDrawerOpen, productId } = useProductDrawer();
+const { favId } = useProductDrawer();
 const switchImage = ref(false);
 const { drawerContentRef } = useScrollToTop();
 const quantity = ref(1);
@@ -119,7 +120,7 @@ const { openDialog } = useDialog();
 const user = useSupabaseUser();
 async function addOrderItem() {
 	if (!user.value) {
-		closeProductDrawer()
+		closeProductDrawer();
 		openDialog("info", "please login to perform this action");
 		return;
 	}
@@ -132,9 +133,7 @@ async function addOrderItem() {
 			(item: any) => item.product_id === productId.value?.toString()
 		)
 	);
-	console.log(orderItems);
-	console.log("productToInserted:", productToInserted.value);
-	console.log(productToInserted.value);
+
 	if (productToInserted.value) {
 		const { data: order } = await supabase
 			.from("order_item")
