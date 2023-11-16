@@ -28,7 +28,9 @@
 					/>
 				</ul>
 				<div class="buttons">
-					<NuxtLink class="checkout">Procced To Checkout</NuxtLink>
+					<NuxtLink @click="createCheckOutSession" class="checkout"
+						>Procced To Checkout</NuxtLink
+					>
 					<NuxtLink to="/shop?page=1" class="shopping"
 						>Continue Shopping</NuxtLink
 					>
@@ -82,7 +84,11 @@ definePageMeta({
 const supabase = useSupabaseClient();
 
 const { data: orderItems, pending } = await useAsyncData(
-	async () => await supabase.from("order_item").select("*").order("created_at")
+	async () =>
+		await supabase
+			.from("order_item")
+			.select("*")
+			.order("created_at", { ascending: false })
 );
 const allOrderItemsTotalPrice = computed(() =>
 	orderItems.value?.data.reduce(
@@ -94,6 +100,19 @@ const priceForFreeShipping = 500.0;
 const priceRemainForFreeShipping = computed(() =>
 	(priceForFreeShipping - allOrderItemsTotalPrice?.value!).toFixed(2)
 );
+async function createCheckOutSession() {
+	const { sessionUrl } = await $fetch<{ sessionUrl: string }>(
+		"/api/create-checkout-session",
+		{
+			method: "POST",
+			body: orderItems.value?.data,
+			headers: {
+				"Content-Type": "application/json",
+			},
+		}
+	);
+	navigateTo(sessionUrl, { external: true, redirectCode: 303 });
+}
 </script>
 
 <style scoped>

@@ -180,9 +180,9 @@ async function addOrderItem() {
 	);
 	console.log(total);
 
-	await supabase.from("order").insert({
-		total_order_price: total,
-	});
+	// await supabase.from("order").insert({
+	// 	total_order_price: total,
+	// });
 	console.log(currentProduct);
 	await refreshNuxtData();
 	pending.value = false;

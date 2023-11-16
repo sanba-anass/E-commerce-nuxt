@@ -28,7 +28,9 @@
 				<div class="text-center" v-else>No products in the cart.</div>
 			</div>
 			<div class="buttons">
-				<NuxtLink to="/checkout" class="checkout">Checkout</NuxtLink>
+				<NuxtLink @click="createCheckOutSession" class="checkout"
+					>Checkout</NuxtLink
+				>
 				<NuxtLink to="/shop/cart" class="view-cart">View Cart</NuxtLink>
 			</div>
 		</main>
@@ -37,6 +39,7 @@
 
 <script setup lang="ts">
 const supabase = useSupabaseClient();
+const router = useRouter();
 
 const { data: orderItems } = await useAsyncData(
 	async () =>
@@ -48,6 +51,19 @@ const { data: orderItems } = await useAsyncData(
 const { closeCartDrawer, isDrawerOpen } = useOpenCartDrawer();
 
 console.log(orderItems.value);
+async function createCheckOutSession() {
+	const { sessionUrl } = await $fetch<{ sessionUrl: string }>(
+		"/api/create-checkout-session",
+		{
+			method: "POST",
+			body: orderItems.value?.data,
+			headers: {
+				"Content-Type": "application/json",
+			},
+		}
+	);
+	navigateTo(sessionUrl, { external: true, redirectCode: 303 });
+}
 </script>
 
 <style scoped>
