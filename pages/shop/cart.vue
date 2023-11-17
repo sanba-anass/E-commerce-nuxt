@@ -71,16 +71,56 @@
 						<textarea placeholder="add your note here"></textarea>
 					</div>
 				</div>
-				<PayPalButton />
+				<!-- <PayPalButton @click="requestPaypalOrder" /> -->
+				<div id="paypal-button-container"></div>
 			</div>
 		</main>
 	</div>
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-	keepalive: false,
+import { loadScript } from "@paypal/paypal-js";
+const config = useRuntimeConfig();
+
+onMounted(async () => {
+	try {
+		const paypal = await loadScript({
+			clientId: config.public.paypalClientId,
+		});
+
+		await paypal
+			.Buttons({
+				createOrder: async (data, actions) => {
+					const res = await $fetch("/api/create-paypal-order", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: orderItems.value?.data,
+					});
+					return res.id;
+				},
+				onApprove: function (data, actions) {
+					return actions.order.capture().then((orderData) => {});
+				},
+				style: {
+					// Adapt to your needs
+					layout: "vertical",
+					color: "gold",
+					shape: "rect",
+					label: "paypal",
+				},
+				// The following is optional and you can
+				// limit the buttons to those you want to
+				// provide
+			})
+			.render("#paypal-button-container");
+	} catch (error) {
+		// Add proper error handling
+		console.error(error);
+	}
 });
+
 const supabase = useSupabaseClient();
 
 const { data: orderItems, pending } = await useAsyncData(
@@ -116,6 +156,9 @@ async function createCheckOutSession() {
 </script>
 
 <style scoped>
+#paypal-button-container {
+	margin-top: 1.5rem;
+}
 .header1 {
 	background-color: rgb(243, 243, 243);
 	padding-block: 1rem;

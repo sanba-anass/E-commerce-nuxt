@@ -9,6 +9,9 @@ export default defineEventHandler(async (event) => {
 		const body = await readBody(event);
 
 		const session = await stripe.checkout.sessions.create({
+			custom_text: {
+				
+			},
 			line_items: body.map((item) => {
 				return {
 					price_data: {

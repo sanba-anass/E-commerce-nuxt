@@ -12,7 +12,12 @@ export default defineNuxtConfig({
 			},
 		},
 	},
-
+	runtimeConfig: {
+		paypalClientSecret: process.env.NUXT_PAYPAL_CLIENT_SECRET,
+		public: {
+			paypalClientId: process.env.NUXT_PAYPAL_CLIENT_ID,
+		},
+	},
 	modules: [
 		"@nuxt/image",
 		"@nuxtjs/supabase",
