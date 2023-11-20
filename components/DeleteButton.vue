@@ -6,16 +6,16 @@
 </template>
 <script setup lang="ts">
 interface Props {
-	productId: string;
+	id: string;
 }
-const { productId } = defineProps<Props>();
+const { id } = defineProps<Props>();
 
 const supabase = useSupabaseClient();
 const pending = ref(false);
 
 const deleteOrderItem = async () => {
 	pending.value = true;
-	await supabase.from("order_item").delete().eq("product_id", productId);
+	await supabase.from("order_item").delete().eq("id", id);
 	await refreshNuxtData();
 	pending.value = false;
 };

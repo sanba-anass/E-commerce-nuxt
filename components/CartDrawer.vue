@@ -23,6 +23,8 @@
 						:key="item.id"
 						:sku="item.sku"
 						:size="item.size"
+						:color="item.color_name"
+						:id="item.id"
 					/>
 				</ul>
 				<div class="text-center" v-else>No products in the cart.</div>
@@ -62,7 +64,7 @@ async function createCheckOutSession() {
 			},
 		}
 	);
-	navigateTo(sessionUrl, { external: true, redirectCode: 303 });
+	await navigateTo(sessionUrl, { external: true, redirectCode: 303 });
 }
 </script>
 

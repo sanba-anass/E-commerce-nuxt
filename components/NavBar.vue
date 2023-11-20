@@ -76,7 +76,7 @@
 			</NuxtLink>
 			<NuxtLink
 				@click="isVisible = false"
-				:to="user ? '/account/success' : '/account/login'"
+				:to="user ? '/account/profile' : '/account/login'"
 				><AccountIcon />
 			</NuxtLink>
 			<NuxtLink

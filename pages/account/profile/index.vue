@@ -1,6 +1,16 @@
 <template>
 	<div class="account-wrapper">
-		<h2>You Are In!</h2>
+		<Spinner v-if="fullName === '' || fullName === null || !user" />
+		<div v-else class="user_info">
+			<p class="email">
+				Email:
+				{{ user?.email ?? user?.user_metadata?.email }}
+			</p>
+			<p class="username">
+				Name:
+				{{ fullName }} {{ user?.user_metadata?.full_name }}
+			</p>
+		</div>
 		<div class="buttons">
 			<button :disabled="logOutPending" @click="LogOut" class="logout">
 				<Spinner v-if="logOutPending" />
@@ -12,9 +22,22 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+	middleware:['auth']
+})	
 const router = useRouter();
 const logOutPending = useLogOutPending();
 const supabase = useSupabaseClient();
+const user = useSupabaseUser();
+const fullName = ref("");
+onMounted(async () => {
+	const { data } = await supabase
+		.from("users")
+		.select("*")
+		.eq("id", user?.value?.id);
+	fullName.value = data[0]?.full_name;
+});
+
 const LogOut = async () => {
 	logOutPending.value = true;
 	const { error } = await supabase.auth.signOut();
@@ -24,12 +47,20 @@ const LogOut = async () => {
 	}
 	logOutPending.value = false;
 	await refreshNuxtData();
+	user.value = null;
 	router.push("/account/login");
 };
 onMounted(async () => await refreshNuxtData());
 </script>
 
 <style scoped>
+.user_info {
+	text-align: center;
+	margin-bottom: 2rem;
+}
+.user_info .email {
+	margin-bottom: 0.5rem;
+}
 .account-wrapper {
 	display: flex;
 	flex-direction: column;

@@ -14,8 +14,10 @@ export default defineNuxtConfig({
 	},
 	runtimeConfig: {
 		paypalClientSecret: process.env.NUXT_PAYPAL_CLIENT_SECRET,
+		stripeSecretKey: process.env.NUXT_STRIPE_SECRET_KEY,
 		public: {
 			paypalClientId: process.env.NUXT_PAYPAL_CLIENT_ID,
+			websiteUrl: process.env.NUXT_WEBSITE_URL,
 		},
 	},
 	modules: [

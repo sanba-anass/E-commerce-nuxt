@@ -25,6 +25,8 @@
 						:image="item.image"
 						:sku="item.sku"
 						:size="item.size"
+						:id="item.id"
+						:colorName="item.color_name"
 					/>
 				</ul>
 				<div class="buttons">
@@ -72,6 +74,7 @@
 					</div>
 				</div>
 				<!-- <PayPalButton @click="requestPaypalOrder" /> -->
+
 				<div id="paypal-button-container"></div>
 			</div>
 		</main>
@@ -81,8 +84,10 @@
 <script setup lang="ts">
 import { loadScript } from "@paypal/paypal-js";
 const config = useRuntimeConfig();
+const router = useRouter();
+const { allowPageAccess } = useSuccessPage();
 
-onMounted(async () => {
+onBeforeMount(async () => {
 	try {
 		const paypal = await loadScript({
 			clientId: config.public.paypalClientId,
@@ -101,8 +106,11 @@ onMounted(async () => {
 					return res.id;
 				},
 				onApprove: function (data, actions) {
-					return actions.order.capture().then((orderData) => {});
+					return actions.order.capture().then((orderData) => {
+						router.push("/success");
+					});
 				},
+
 				style: {
 					// Adapt to your needs
 					layout: "vertical",
@@ -140,6 +148,7 @@ const priceForFreeShipping = 500.0;
 const priceRemainForFreeShipping = computed(() =>
 	(priceForFreeShipping - allOrderItemsTotalPrice?.value!).toFixed(2)
 );
+
 async function createCheckOutSession() {
 	const { sessionUrl } = await $fetch<{ sessionUrl: string }>(
 		"/api/create-checkout-session",
@@ -151,14 +160,16 @@ async function createCheckOutSession() {
 			},
 		}
 	);
-	navigateTo(sessionUrl, { external: true, redirectCode: 303 });
+	await navigateTo(sessionUrl, { external: true, redirectCode: 303 });
 }
 </script>
 
 <style scoped>
 #paypal-button-container {
 	margin-top: 1.5rem;
+	border-radius: 0 !important;
 }
+
 .header1 {
 	background-color: rgb(243, 243, 243);
 	padding-block: 1rem;

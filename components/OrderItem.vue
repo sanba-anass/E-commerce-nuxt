@@ -14,8 +14,14 @@
 				${{ price }} x
 				<span class="quantity">{{ totalQuantity }}</span>
 			</p>
+			<p class="size">
+				Size: <span>{{ size }}</span>
+			</p>
+			<p class="color">
+				Color: <span>{{ color }}</span>
+			</p>
 		</div>
-		<DeleteButton :productId="productId" />
+		<DeleteButton :id="id" />
 	</div>
 </template>
 
@@ -26,9 +32,13 @@ interface Props {
 	price: number;
 	image: string;
 	totalQuantity: number;
+	id: string;
+	size: string;
+	color: string;
 }
 
-const { title, price, image, productId } = defineProps<Props>();
+const { title, price, image, productId, id, color, size } =
+	defineProps<Props>();
 </script>
 
 <style scoped>
@@ -86,5 +96,13 @@ button {
 }
 button:hover {
 	background: rgb(218, 218, 218);
+}
+
+.size,
+.color {
+	font-size: 0.70rem;
+	color: rgb(163, 163, 163);
+	margin-top: 0.5rem;
+	text-transform: uppercase;
 }
 </style>

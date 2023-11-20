@@ -1,7 +1,7 @@
 <template>
 	<div class="cart-item">
 		<div class="product">
-			<DeleteButton :productId="productId" />
+			<DeleteButton :id="id" />
 			<NuxtImg
 				:to="`/shop/${title.split(' ').join('-')}?id=${productId}`"
 				class="img"
@@ -15,13 +15,14 @@
 				>
 				<p class="sku">SKU: {{ sku }}</p>
 				<p class="size">SIZE: {{ size }}</p>
+				<p class="color-name">COLOR: {{ colorName }}</p>
 			</div>
 		</div>
 		<div class="details">
 			<p class="price">${{ price.toFixed(2) }}</p>
 
 			<QuantityConuter
-				:productId="productId"
+				:id="id"
 				class="counter"
 				v-model:quantity="quantity"
 				:isCartItem="true"
@@ -34,20 +35,32 @@
 
 <script setup lang="ts">
 interface Props {
-	productId: string;
+	id: string;
 	title: string;
 	price: number;
 	image: string;
 	totalQuantity: number;
 	sku: string;
 	size: string;
+	colorName: string;
+	productId: string;
 }
-const { productId, totalQuantity, title, price, image, sku, size } =
-	defineProps<Props>();
+const {
+	productId,
+	totalQuantity,
+	title,
+	price,
+	image,
+	sku,
+	size,
+	colorName,
+	id,
+} = defineProps<Props>();
 const quantity = ref(totalQuantity);
 </script>
 
 <style scoped>
+
 .cart-item {
 	display: flex;
 	border: 1px solid #eee;
@@ -94,7 +107,7 @@ const quantity = ref(totalQuantity);
 	margin-left: 1.5rem;
 }
 .title {
-	margin-bottom: 0.25rem;
+	margin-bottom: 0.75rem;
 	display: inline-block;
 	font-size: 0.85rem;
 	font-weight: 700;
@@ -105,12 +118,15 @@ const quantity = ref(totalQuantity);
 	text-decoration: underline;
 }
 .sku,
-.size {
-	color: grey;
+.size,
+.color-name {
+	color: rgb(179, 179, 179);
 	font-weight: 500;
 	font-size: 0.75rem;
 	margin-bottom: 0.25rem;
+	text-transform: uppercase;
 }
+
 button {
 	background: 0;
 	border: 0;

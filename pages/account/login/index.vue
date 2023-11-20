@@ -1,18 +1,6 @@
 <template>
 	<div class="account-wrapper">
-		<div v-if="user">
-			<h2>You Are In!</h2>
-
-			<div class="buttons">
-				<button :disabled="logOutPending" @click="LogOut" class="logout">
-					<Spinner v-if="logOutPending" />
-					<span v-else>LogOut</span>
-				</button>
-				<NuxtLink to="/shop?page=1" class="shopping">Go Shopping</NuxtLink>
-			</div>
-		</div>
-
-		<form v-else @submit.prevent="LogIn">
+		<form @submit.prevent="LogIn">
 			<h2>Login</h2>
 			<label :class="{ red: formErrors.email }" for="email">{{
 				formErrors.email
@@ -26,6 +14,7 @@
 				type="email"
 				name="email"
 				id="email"
+				autocomplete="on"
 			/>
 
 			<label :class="{ red: formErrors.password }" for="password">{{
@@ -46,15 +35,15 @@
 				<Spinner v-if="pending" />
 				<span v-else>Login</span>
 			</button>
-			<div class="wrapper">
-				<div class="checkbox">
+			<!-- <div class="wrapper">
+				<div hidden class="checkbox">
 					<label for="checkbox">Remember me</label>
 					<input type="checkbox" name="checkbox" id="checkbox" />
 				</div>
 				<NuxtLink to="/account/forgot-password" class="link">
 					Forgot Password?
 				</NuxtLink>
-			</div>
+			</div> -->
 			<button @click="singInWithGoogle" type="button" class="google-button">
 				<div><GoogleIcon /> <span class="ms-2"> Connect with Google</span></div>
 			</button>
@@ -68,13 +57,15 @@
 	</div>
 </template>
 <script setup>
+definePageMeta({
+	middleware:['auth']
+})
 const email = ref("");
 const password = ref("");
 const pending = ref(false);
+const supabase = useSupabaseClient();
 const user = useSupabaseUser();
 const router = useRouter();
-const logOutPending = useLogOutPending();
-const supabase = useSupabaseClient();
 function isValidEmail(email) {
 	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 	return emailRegex.test(email);
@@ -98,6 +89,8 @@ watch(password, () => {
 	}
 	formErrors.password = password.value.length < 6;
 });
+const config = useRuntimeConfig();
+const WEBSITE_URL = config.public.websiteUrl;
 async function LogIn() {
 	pending.value = true;
 	const { error } = await supabase.auth.signInWithPassword({
@@ -110,24 +103,27 @@ async function LogIn() {
 	}
 	pending.value = false;
 	await refreshNuxtData();
+	router.push("/account/profile");
 }
-const LogOut = async () => {
-	logOutPending.value = true;
-	const { error } = await supabase.auth.signOut();
-	if (error) {
-		logOutPending.value = false;
-		return;
-	}
-	logOutPending.value = false;
-};
 
 async function singInWithGoogle() {
-	const { data } = await supabase.auth.signInWithOAuth({
+	await supabase.auth.signInWithOAuth({
 		provider: "google",
 		options: {
-			redirectTo: "https://e-commerce-nuxt-six.vercel.app/account/success",
+			redirectTo: `${WEBSITE_URL}/account/profile`,
+			queryParams: {
+				access_type: "offline",
+				prompt: "consent",
+			},
 		},
 	});
+
+	// await supabase.from("users").insert({
+	// 	full_name: ,
+	// 	id: user?.value?.id,
+	// });
+	console.log(user.value,supabase.auth.getUser());
+
 }
 </script>
 <style scoped>
@@ -135,6 +131,7 @@ h2 {
 	margin-bottom: 2rem;
 	text-align: center;
 }
+
 .account-wrapper {
 	display: flex;
 	max-width: 105rem;

@@ -1,10 +1,6 @@
 // const paypal = require("@paypal/checkout-server-sdk");
 import paypal from "@paypal/checkout-server-sdk";
 export default defineEventHandler(async (event) => {
-	//sb-r3i8728237303@personal.example.com
-	// 5*^h4Ba-
-	//sb-co0xe28237304@business.example.com
-	//$n-v2+Y:
 	const config = useRuntimeConfig();
 	const clientId = config.public.paypalClientId as string;
 
@@ -19,6 +15,7 @@ export default defineEventHandler(async (event) => {
 
 	request.prefer("return=representation");
 	const body = await readBody(event);
+
 	const total = body.reduce((sum, item) => {
 		return sum + item.price * item.total_quantity;
 	}, 0);
@@ -39,12 +36,11 @@ export default defineEventHandler(async (event) => {
 				items: body.map((item) => {
 					return {
 						name: item.title,
-						sku: item.sku,
-						category: item.category,
 						unit_amount: {
 							currency_code: "USD",
 							value: item.price,
 						},
+
 						quantity: item.total_quantity,
 					};
 				}),

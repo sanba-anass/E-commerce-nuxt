@@ -43,7 +43,7 @@
 						:rating="product.rating"
 					/>
 				</div>
-				<Pagination :disabledAmount="disabledAmount" />
+				<Pagination :filter="selectedFilter" />
 			</div>
 		</div>
 		<Teleport to="body">
@@ -63,7 +63,6 @@ const supabase = useSupabaseClient();
 const count = useCount();
 const user = useSupabaseUser();
 
-const disabledAmount = ref(1);
 const route = useRoute();
 
 const { from, to } = usePagination();
@@ -88,7 +87,12 @@ const { data: products } = await useAsyncData(async () => {
 });
 const _products = useProductList();
 _products.value = products.value?.data;
-
+const filter = useCookie("filter", {
+	default: () => selectedFilter.value,
+});
+onMounted(() => {
+	selectedFilter.value = filter.value;
+});
 watch(
 	[from, to, selectedFilter],
 	async ([newFrom, newTo, newSelectedFilter]) => {
@@ -190,6 +194,7 @@ watch(
 );
 
 const router = useRouter();
+
 watch(selectedFilter, async (newValue) => {
 	from.value = 0;
 	to.value = 11;
@@ -206,7 +211,6 @@ watch(selectedFilter, async (newValue) => {
 					.eq("category", "Featured Products");
 			});
 			_products.value = featuredProducts.value?.data;
-			disabledAmount.value = 2;
 
 			break;
 		case "Best selling":
@@ -218,7 +222,6 @@ watch(selectedFilter, async (newValue) => {
 					.eq("category", "Best Sellers");
 			});
 			_products.value = bestSellingProducts.value?.data;
-			disabledAmount.value = 1;
 			break;
 		case "alphabetically A-Z":
 			const { data: AtoZProducts } = await useAsyncData(async () => {
@@ -229,7 +232,6 @@ watch(selectedFilter, async (newValue) => {
 					.order("title", { ascending: true });
 			});
 			_products.value = AtoZProducts.value?.data;
-			disabledAmount.value = 0;
 
 			break;
 		case "alphabetically Z-A":
@@ -241,7 +243,6 @@ watch(selectedFilter, async (newValue) => {
 					.order("title", { ascending: false });
 			});
 			_products.value = ZtoAProducts.value?.data;
-			disabledAmount.value = 0;
 
 			break;
 		case "price, low to high":
@@ -253,7 +254,6 @@ watch(selectedFilter, async (newValue) => {
 					.order("price", { ascending: true });
 			});
 			_products.value = lowtoHighPriceProducts.value?.data;
-			disabledAmount.value = 0;
 
 			break;
 		case "price, high to low":
@@ -265,7 +265,6 @@ watch(selectedFilter, async (newValue) => {
 					.order("price", { ascending: false });
 			});
 			_products.value = hightoLowPriceProducts.value?.data;
-			disabledAmount.value = 0;
 
 			break;
 		case "date old to new":
@@ -277,7 +276,6 @@ watch(selectedFilter, async (newValue) => {
 					.order("created_at", { ascending: false });
 			});
 			_products.value = oldToNewProducts.value?.data;
-			disabledAmount.value = 0;
 
 			break;
 		case "date new to old":
@@ -289,12 +287,13 @@ watch(selectedFilter, async (newValue) => {
 					.order("created_at", { ascending: true });
 			});
 			_products.value = newToOldProducts.value?.data;
-			disabledAmount.value = 0;
 
 			break;
 	}
 });
-
+watch(selectedFilter, (newValue) => {
+	filter.value = selectedFilter.value;
+});
 const isFavourite = ref(false);
 
 const cols = ref(3);

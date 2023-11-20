@@ -28,17 +28,6 @@
 	</NuxtLayout>
 </template>
 <script setup lang="ts">
-const config = useRuntimeConfig();
-const clientId = config.public.paypalClientId as string;
-useHead({
-	script: [
-		{
-			src: `https://www.paypal.com/sdk/js?client-id=${clientId}`,
-			tagPosition: "bodyClose",
-			"data-namespace": "paypal_sdk",
-		},
-	],
-});
 const { isDrawerOpen, closeCartDrawer } = useOpenCartDrawer();
 const { toastId } = useToast(30);
 const { productId } = useProductDrawer();
@@ -122,4 +111,5 @@ input[type="checkbox"] {
 .loading-indicator {
 	background-color: black;
 }
+
 </style>

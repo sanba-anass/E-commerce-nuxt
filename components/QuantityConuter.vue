@@ -18,11 +18,11 @@
 
 <script setup lang="ts">
 interface Props {
-	productId: string;
+	id: string;
 	isCartItem: boolean;
 }
 
-const { productId, isCartItem } = defineProps<Props>();
+const { id, isCartItem } = defineProps<Props>();
 const quantity = defineModel<number>("quantity");
 const quan = ref(quantity.value);
 const supabase = useSupabaseClient();
@@ -32,7 +32,7 @@ const updateTotalQuantity = async () => {
 		.update({
 			total_quantity: quan.value,
 		})
-		.eq("product_id", productId);
+		.eq("id", id);
 
 	await refreshNuxtData();
 };

@@ -33,18 +33,7 @@
 					<Rating :rating="currentProduct.data[0]?.rating" />
 				</div>
 				<p class="description">{{ currentProduct.data[0]?.description }}</p>
-				<div class="product-options">
-					<div class="option">
-						<div class="option-title">tags:</div>
-						<div class="details">
-							<NuxtLink
-								to="/shop"
-								v-for="tag in currentProduct.data[0]?.tags"
-								>{{ tag + "," }}</NuxtLink
-							>
-						</div>
-					</div>
-				</div>
+
 				<div class="product-options">
 					<div class="option">
 						<div class="option-title">sku:</div>
@@ -53,7 +42,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="product-options">
+				<div class="product-options last">
 					<div class="option">
 						<div class="option-title">category:</div>
 						<div class="details">
@@ -61,8 +50,47 @@
 						</div>
 					</div>
 				</div>
-				<div class="notes">Notes</div>
-				<textarea placeholder="Write here your notes for the order"></textarea>
+
+				<div class="product-option">
+					<div class="option">
+						<div class="option-title color">
+							Color:
+							<span class="color-name">{{
+								colors[selectedColorIndex as number]?.colorName
+							}}</span>
+						</div>
+					</div>
+					<ul class="colors">
+						<button
+							:class="{ 'color-outline': color.isActive }"
+							@click="setActiveColor(index)"
+							:style="{ background: color.color }"
+							v-for="(color, index) in colors"
+							class="color"
+						></button>
+					</ul>
+				</div>
+				<div class="product-option">
+					<div class="option">
+						<div class="option-title color">
+							Size:
+							<span class="color-name">{{
+								sizes[selectedSizeIndex as number]?.size
+							}}</span>
+						</div>
+					</div>
+					<ul class="sizes">
+						<button
+							class="size-button"
+							@click="setActiveSize(index)"
+							:class="{ 'size-outline': size.isActive }"
+							v-for="(size, index) in sizes"
+						>
+							{{ size.size }}
+						</button>
+					</ul>
+				</div>
+
 				<div class="quantity">quantity:</div>
 				<div class="quantity-details">
 					<QuantityConuter
@@ -71,6 +99,7 @@
 						:height="3"
 						v-model:quantity="quantity"
 						:isCartItem="false"
+						:id="currentProduct.data[0]?.id"
 					/>
 					<button
 						:disabled="pending"
@@ -81,7 +110,9 @@
 						<div v-else>Add to Bag</div>
 					</button>
 				</div>
-				<PayPalButton />
+				<div id="paypal-button-container">
+					<div v-if="!user" class="buttons-overlay"></div>
+				</div>
 
 				<div class="payment-title">guaranted safe checkout:</div>
 				<NuxtImg
@@ -114,6 +145,18 @@
 </template>
 
 <style scoped>
+#paypal-button-container {
+	margin-top: 1.5rem;
+	position: relative;
+}
+.buttons-overlay {
+	height: calc(100% - 2.7rem);
+	cursor: not-allowed;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	z-index: 999;
+}
 .social-links {
 	display: flex;
 	align-items: center;
@@ -320,8 +363,6 @@ textarea:focus {
 	align-items: center;
 	justify-content: space-between;
 }
-.title-wrapper .add-to-wishlist {
-}
 
 .product-details .title {
 	font-size: 1.75rem;
@@ -364,6 +405,45 @@ textarea:focus {
 	display: flex;
 	flex-wrap: wrap;
 }
+.product-option .colors {
+	display: flex;
+	gap: 1rem;
+	margin-bottom: 2rem;
+}
+.product-option .colors .color {
+	background-color: rgb(231, 231, 231);
+	width: 1.85rem;
+	height: 1.85rem;
+	border-radius: 50%;
+	border: 0;
+}
+.sizes {
+	display: flex;
+	gap: 1rem;
+}
+.product-option .sizes .size-button {
+	border: 1px solid rgb(231, 231, 231);
+	width: 1.85rem;
+	height: 1.85rem;
+	border-radius: 50%;
+	background: 0;
+	font-size: 0.75rem;
+}
+.size-outline {
+	border: 1px solid black !important;
+}
+
+.option-title.color {
+	font-weight: 700;
+	font-size: 0.7rem;
+	color: rgb(87, 87, 87);
+	text-transform: uppercase;
+	margin-bottom: 1.5rem;
+}
+.option-title.color .color-name {
+	color: black;
+	font-weight: 500;
+}
 .product-options .details {
 	font-weight: 700;
 }
@@ -384,6 +464,15 @@ textarea:focus {
 	text-decoration: underline;
 	color: rgb(34, 34, 34);
 }
+.product-options.last {
+	margin-bottom: 3rem;
+}
+
+.color-outline {
+	outline: 1px solid rgb(158, 158, 158);
+	outline-offset: 0.15rem;
+}
+
 .isSelectingImg {
 	animation: slideIn 0.5s;
 }
@@ -405,8 +494,46 @@ textarea:focus {
 <script setup lang="ts">
 const route = useRoute();
 
-
 const isSelectingImg = ref(false);
+const selectedColorIndex = ref<number | null>(null);
+const selectedSizeIndex = ref<number | null>(null);
+const colors = ref([
+	{ color: "rgb(172,253,47)", colorName: "Green Yellow", isActive: false },
+	{ color: "rgb(128,128,128)", colorName: "gray", isActive: false },
+	{ color: "rgb(198,132,177)", colorName: "Opera Mauve", isActive: false },
+	{ color: "rgb(217,182,154)", colorName: "Tan", isActive: false },
+	{ color: "rgb(231,166,72)", colorName: "Indian Yellow", isActive: false },
+]);
+
+const sizes = ref([
+	{ size: "XS", isActive: false },
+	{ size: "S", isActive: false },
+	{ size: "M", isActive: false },
+	{ size: "L", isActive: false },
+	{ size: "XL", isActive: false },
+	{ size: "XXL", isActive: false },
+	{ size: "X", isActive: false },
+]);
+function setActiveColor(index: number) {
+	selectedColorIndex.value = index;
+
+	colors.value[index].isActive = true;
+	colors.value.forEach((_, i) => {
+		if (i !== index) {
+			colors.value[i].isActive = false;
+		}
+	});
+}
+function setActiveSize(index: number) {
+	selectedSizeIndex.value = index;
+
+	sizes.value[index].isActive = true;
+	sizes.value.forEach((_, i) => {
+		if (i !== index) {
+			sizes.value[i].isActive = false;
+		}
+	});
+}
 
 const queryId: string = route.query.id as string;
 
@@ -454,7 +581,6 @@ const setActiveImg = (index: number) => {
 		}
 	});
 };
-const { openCartDrawer } = useOpenCartDrawer();
 const pending = useAddCartPending();
 const { toastId, isFavouriteItem } = useToast(30);
 const { openDialog } = useDialog();
@@ -465,21 +591,30 @@ async function addOrderItem() {
 
 		return;
 	}
+	if (
+		!sizes.value[selectedSizeIndex.value]?.size ||
+		!colors.value[selectedColorIndex.value]?.colorName
+	) {
+		alert("please select a size and a color!");
+		return;
+	}
 	pending.value = true;
 
 	const { data: orderItems } = await supabase.from("order_item").select("*");
 
 	const productToInserted = orderItems?.find(
-		(item: any) => item.product_id === queryId.toString()
+		(item: any) =>
+			item.product_id === queryId &&
+			item.color_name === colors.value[selectedColorIndex.value]?.colorName &&
+			item.size === sizes.value[selectedSizeIndex.value]?.size
 	);
-	console.log(orderItems);
-	console.log("productToInserted:", productToInserted);
 
 	if (productToInserted) {
 		const { data: order } = await supabase
 			.from("order_item")
 			.select("total_quantity")
-			.eq("product_id", productToInserted.product_id);
+			.eq("color_name", productToInserted.color_name)
+			.eq("size", productToInserted.size);
 		const total_quantity =
 			parseInt(order![0].total_quantity) + parseInt(quantity.value);
 		await supabase
@@ -488,7 +623,8 @@ async function addOrderItem() {
 			.update({
 				total_quantity: total_quantity,
 			})
-			.eq("product_id", productToInserted.product_id);
+			.eq("color_name", productToInserted.color_name)
+			.eq("size", productToInserted.size);
 
 		await refreshNuxtData();
 		pending.value = false;
@@ -512,19 +648,90 @@ async function addOrderItem() {
 		image: currentProduct[0].detail_images[0],
 		price: currentProduct[0].price,
 		sku: currentProduct[0].sku,
-		size: currentProduct[0].size,
+		size: sizes.value[selectedSizeIndex.value]?.size,
+		color_name: colors.value[selectedColorIndex.value]?.colorName,
 	});
 	const { data: orderItems2 } = await supabase.from("order_item").select("*");
 	const total = orderItems2?.reduce(
 		(total, item) => item.total_quantity * item.price + total,
 		0
 	);
-	console.log(total);
 
-	console.log(currentProduct);
 	await refreshNuxtData();
 	pending.value = false;
 }
+import { CreateOrderActions, loadScript } from "@paypal/paypal-js";
+const config = useRuntimeConfig();
+const router = useRouter();
+const { data: currentOrder } = await supabase
+	.from("product")
+	.select("*")
+	.eq("id", queryId);
+console.log("currectOrder", currentOrder);
+onBeforeMount(async () => {
+	try {
+		const paypal = await loadScript({
+			clientId: config.public.paypalClientId,
+		});
+
+		await paypal
+			.Buttons({
+				createOrder: async (data, actions: CreateOrderActions) => {
+					if (
+						!sizes.value[selectedSizeIndex.value]?.size ||
+						!colors.value[selectedColorIndex.value]?.colorName
+					) {
+						alert("please select a size and a color!");
+						return;
+					}
+					try {
+						if (user.value) {
+							const res = await $fetch("/api/create-paypal-order", {
+								method: "POST",
+								headers: {
+									"Content-Type": "application/json",
+								},
+								body: [
+									{
+										title: currentOrder[0]?.title,
+										sku: currentOrder[0]?.sku,
+										category: currentOrder[0]?.category,
+										price: currentOrder[0]?.price,
+										total_quantity: quantity.value,
+									},
+								],
+							});
+							return res.id;
+						} else {
+							openDialog("info", "please login to perform this action");
+							throw new Error("user does not exist");
+						}
+					} catch (e) {
+						console.log(e.message);
+					}
+				},
+				onApprove: function (data, actions) {
+					return actions.order.capture().then((orderData) => {
+						router.push("/success");
+					});
+				},
+				style: {
+					// Adapt to your needs
+					layout: "vertical",
+					color: "gold",
+					shape: "rect",
+					label: "paypal",
+				},
+				// The following is optional and you can
+				// limit the buttons to those you want to
+				// provide
+			})
+			.render("#paypal-button-container");
+	} catch (error) {
+		// Add proper error handling
+		console.error(error);
+	}
+});
 onUnmounted(() => {
 	clearTimeout(id);
 });

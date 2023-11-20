@@ -1,17 +1,6 @@
 <template>
 	<div class="account-wrapper">
-		<div v-if="user">
-			<h2>You Are In!</h2>
-
-			<div class="buttons">
-				<button :disabled="logOutPending" @click="LogOut" class="logout">
-					<Spinner v-if="logOutPending" />
-					<span v-else>LogOut</span>
-				</button>
-				<NuxtLink to="/shop?page=1" class="shopping">Go Shopping</NuxtLink>
-			</div>
-		</div>
-		<form v-else @submit.prevent="createAccount">
+		<form @submit.prevent="createAccount">
 			<h2>Create an Account</h2>
 			<div class="input-wrapper">
 				<label :class="{ red: formErrors.fullName }" for="name">{{
@@ -122,8 +111,9 @@ const password = ref("");
 const confirmPassword = ref("");
 const agree = ref(false);
 const pending = ref(false);
-const logOutPending = useLogOutPending();
 const user = useSupabaseUser();
+const supabase = useSupabaseClient();
+const router = useRouter()
 
 const formErrors = reactive({
 	email: false,
@@ -168,7 +158,7 @@ watch(agree, () => {
 	}
 	formErrors.agree = !agree.value;
 });
-const supabase = useSupabaseClient();
+
 const createAccount = async () => {
 	if (
 		formErrors.email ||
@@ -198,23 +188,21 @@ const createAccount = async () => {
 	}
 	pending.value = false;
 	await refreshNuxtData();
-	await supabase.from("user_ids").upsert({
-		user_id: user.value.id,
+    router.push('/account/profile')
+	await supabase.from("users").insert({
+		full_name: fullName.value.trim(),
+		id: user.value.id,
 	});
-};
-
-const LogOut = async () => {
-	logOutPending.value = true;
-	const { error } = await supabase.auth.signOut();
-	if (error) {
-		logOutPending.value = false;
-		return;
-	}
-	logOutPending.value = false;
-	await refreshNuxtData();
 };
 </script>
 <style scoped>
+.user_info {
+	text-align: center;
+	margin-bottom: 2rem;
+}
+.user_info .email {
+	margin-bottom: 0.5rem;
+}
 h2 {
 	margin-bottom: 2rem;
 	text-align: center;

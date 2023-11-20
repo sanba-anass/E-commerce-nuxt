@@ -1,10 +1,12 @@
 <template>
-	<div
-		:style="{
-			background: `url(/images/blog${blog + 1}-big-img.jpg)`,
-		}"
-		class="blog-background"
-	></div>
+	<div class="background-wrapper">
+		<div
+			:style="{
+				background: `url(/images/blog${blog + 1}-big-img.jpg)`,
+			}"
+			class="blog-background"
+		></div>
+	</div>
 	<div class="blog-wrapper">
 		<section class="intro">
 			<div class="date">
@@ -387,16 +389,10 @@ h1 {
 	margin-top: 2rem;
 }
 .blog-background {
-	width: 100%;
 	min-height: 100vh;
-	background-repeat: no-repeat;
-	background-position: center 40% !important;
+	background-size: cover !important;
 	background-repeat: no-repeat !important;
 	background-attachment: fixed !important;
 }
-/* @media (max-width: 40em) {
-	.blog-background {
-		background:url('images/')!important;
-	}
-} */
+
 </style>

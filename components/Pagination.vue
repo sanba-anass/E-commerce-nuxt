@@ -1,21 +1,20 @@
 <template>
-	<div :class="{ none: disabledAmount === 2 }" class="pagination">
+	<div v-if="hidePagination" class="pagination">
 		<NuxtLink @click="previousPage" class="link">
 			<LeftArrow class="icon" />
 			<p>Previous</p>
 		</NuxtLink>
 		<div class="buttons">
 			<NuxtLink
-				v-for="n in 3"
-				:to="`/shop?page=${n}`"
-				:class="{
-					none: disabledAmount === 2 || (disabledAmount === 1 && n === 3),
-				}"
+				v-for="num in paginationButtons"
+				:key="num"
+				:to="`/shop?page=${num}`"
 				class="page-button"
-				@click="setActiveLink(n)"
-				:active-class="pageNumber === n.toString() ? 'active' : ''"
-				>{{ n }}</NuxtLink
+				@click="setActiveLink(num)"
+				:active-class="pageNumber === num.toString() ? 'active' : ''"
 			>
+				{{ num }}
+			</NuxtLink>
 		</div>
 
 		<NuxtLink @click="nextPage" class="link">
@@ -26,17 +25,49 @@
 </template>
 
 <script setup lang="ts">
-
 interface Props {
-	disabledAmount: number;
+	filter: string;
 }
-const { disabledAmount } = defineProps<Props>();
+const props = defineProps<Props>();
 const { changePage } = usePagination();
 const route = useRoute();
 const router = useRouter();
 const count = useCount();
 const pageNumber = ref(route.query?.page as string);
 const disableLink = ref(false);
+const paginationButtons = ref([1, 2, 3]);
+const hidePagination = ref(true);
+const page = useCookie("pageQuery", {
+	default: () => "1",
+});
+
+onMounted(() => {
+	page.value = route.query?.page;
+	setTimeout(() => {
+		if (page.value === "1") {
+			changePage(+page.value);
+		} else if (page.value === "2") {
+			changePage(+page.value);
+		} else if (page.value === "3") {
+			changePage(+page.value);
+		}
+		router.push(`/shop?page=${page.value}`);
+	}, 500);
+});
+const filter = useCookie("filter");
+watchEffect(() => {
+	if (props.filter === "Featured") {
+		hidePagination.value = false;
+	} else {
+		hidePagination.value = true;
+	}
+	if (props.filter !== "Best selling") {
+		paginationButtons.value = [1, 2, 3];
+		return;
+	}
+
+	paginationButtons.value.pop();
+});
 
 if (parseInt(pageNumber.value) <= 0 || parseInt(pageNumber.value) > 3) {
 	throw createError({
@@ -46,6 +77,7 @@ if (parseInt(pageNumber.value) <= 0 || parseInt(pageNumber.value) > 3) {
 }
 
 function setActiveLink(n: number) {
+	window.scrollTo(0, 0);
 	pageNumber.value = n.toString();
 	changePage(n);
 	count.value = n;
@@ -69,6 +101,9 @@ function nextPage() {
 	if (count.value >= 3) {
 		return;
 	}
+	if (count.value === 2 && paginationButtons.value.length === 2) {
+		return;
+	}
 	count.value++;
 
 	changePage(count.value);
@@ -76,6 +111,17 @@ function nextPage() {
 	pageNumber.value = `${count.value}`;
 	router.push(`/shop?page=${count.value}`);
 	window.scrollTo(0, 0);
+}
+
+if (
+	route.query?.page === "3" &&
+	(filter.value === "Featured" || filter.value === "Best selling")
+) {
+	throw createError({
+		statusCode: 404,
+		statusMessage: "Not Found",
+		fatal: true,
+	});
 }
 </script>
 

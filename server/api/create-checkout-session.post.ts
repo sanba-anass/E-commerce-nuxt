@@ -1,17 +1,14 @@
 import Stripe from "stripe";
 
 export default defineEventHandler(async (event) => {
-	const stripe = new Stripe(
-		"sk_test_51O96FoABR43x3i9Xtmx23sRylJe3pWN4foixTgR7HvaBZMxJVUIxlUMrCFFloDGGFcokT8xJa9lrivAFvHvRVRkE008NdIpUpG"
-	);
-	const YOUR_DOMAIN = "http://localhost:3000";
+	const config = useRuntimeConfig();
+	const stripe = new Stripe(config.stripeSecretKey);
+	const WEBSITE_URL = config.public.websiteUrl;
 	try {
 		const body = await readBody(event);
 
 		const session = await stripe.checkout.sessions.create({
-			custom_text: {
-				
-			},
+			custom_text: {},
 			line_items: body.map((item) => {
 				return {
 					price_data: {
@@ -30,11 +27,11 @@ export default defineEventHandler(async (event) => {
 			mode: "payment",
 			payment_method_types: ["card"],
 
-			success_url: `${YOUR_DOMAIN}/success`,
-			cancel_url: `${YOUR_DOMAIN}/shop/cart`,
-		});
-		console.log(body);
+			success_url: `${WEBSITE_URL}/success`,
+			cancel_url: `${WEBSITE_URL}/shop/cart`,
 
+		});
+		
 		return { sessionUrl: session.url };
 	} catch (e) {
 		console.error(e);
