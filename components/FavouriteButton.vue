@@ -15,6 +15,8 @@
 <script setup lang="ts">
 interface Props {
 	id: string;
+	colorName: string;
+	size: string;
 }
 
 const props = defineProps<Props>();
@@ -47,6 +49,7 @@ const updateIsFavourite = async () => {
 			//@ts-ignore
 			.update({
 				isFavourite: currentProduct.value?.isFavourite,
+				user_id: user.value.id,
 			})
 			.eq("id", props.id);
 
@@ -58,8 +61,11 @@ const updateIsFavourite = async () => {
 				sku: currentProduct.value?.sku,
 				price: currentProduct.value?.price,
 				image: currentProduct.value?.detail_images[0],
+				colorName: props.colorName,
+				size: props.size,
 			});
 		} else {
+			// fix this
 			await supabase
 				.from("wishlist")
 				.delete()

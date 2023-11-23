@@ -113,7 +113,7 @@ const agree = ref(false);
 const pending = ref(false);
 const user = useSupabaseUser();
 const supabase = useSupabaseClient();
-const router = useRouter()
+const router = useRouter();
 
 const formErrors = reactive({
 	email: false,
@@ -188,7 +188,7 @@ const createAccount = async () => {
 	}
 	pending.value = false;
 	await refreshNuxtData();
-    router.push('/account/profile')
+	router.push("/account/profile");
 	await supabase.from("users").insert({
 		full_name: fullName.value.trim(),
 		id: user.value.id,
@@ -204,7 +204,6 @@ const createAccount = async () => {
 	margin-bottom: 0.5rem;
 }
 h2 {
-	margin-bottom: 2rem;
 	text-align: center;
 }
 .password-inputs {
@@ -212,9 +211,12 @@ h2 {
 	gap: 1rem;
 	width: 100%;
 }
-@media (max-width: 38.75rem) {
+@media (max-width: 620px) {
 	.password-inputs {
 		display: block;
+	}
+	h2{
+		margin-block: 2rem;
 	}
 }
 .password-inputs input {

@@ -37,7 +37,7 @@
 			</select>
 			<ul class="slider">
 				<ProductItem
-					v-for="product in _products"
+					v-for="product in _products.slice(0,4)"
 					:url1="product.preview_images[0]"
 					:url2="product.preview_images[1]"
 					:title="product.title"
@@ -110,12 +110,6 @@ const supabase = useSupabaseClient();
 const _products = useProductList();
 const route = useRoute();
 
-watch(
-	() => route.fullPath,
-	() => {
-		_products.value = products.value?.data;
-	}
-);
 
 const tabs = ref([
 	{ text: "Featured", isActive: true },

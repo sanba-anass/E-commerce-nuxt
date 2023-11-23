@@ -200,69 +200,70 @@
 		</div>
 	</BigMenu>
 	<Teleport to="body">
-		<div
-			:class="{ isVisibleSearchMenu: isVisibleSearchMenu }"
-			class="search-menu"
-		>
-			<button
-				@click="
-					isVisibleSearchMenu = false;
-					hideSideBar();
-				"
-				class="close-button"
+		<ClientOnly>
+			<div
+				:class="{ isVisibleSearchMenu: isVisibleSearchMenu }"
+				class="search-menu"
 			>
-				<CloseIcon />
-			</button>
-
-			<div class="content">
-				<p class="title">What Are You Looking For?</p>
-				<form @submit.prevent="searchProductByTitle()" class="input">
-					<input
-						v-model.trim="searchTerm"
-						type="text	"
-						name=""
-						id=""
-						placeholder="Search for..."
-					/>
-					<div class="search-buttons">
-						<button
-							@click="searchTerm = ''"
-							v-if="searchTermFilled"
-							type="button"
-							class="search-button"
-						>
-							<CloseIcon />
-						</button>
-						<button
-							type="submit"
-							:disabled="searchPending"
-							class="search-button"
-						>
-							<SearchIcon v-if="!searchPending" />
-							<Spinner v-else />
-						</button>
+				<button
+					@click="
+						isVisibleSearchMenu = false;
+						hideSideBar();
+					"
+					class="close-button"
+				>
+					<CloseIcon />
+				</button>
+				<div class="content">
+					<p class="title">What Are You Looking For?</p>
+					<form @submit.prevent="searchProductByTitle()" class="input">
+						<input
+							v-model.trim="searchTerm"
+							type="text	"
+							name=""
+							id=""
+							placeholder="Search for..."
+						/>
+						<div class="search-buttons">
+							<button
+								@click="searchTerm = ''"
+								v-if="searchTermFilled"
+								type="button"
+								class="search-button"
+							>
+								<CloseIcon />
+							</button>
+							<button
+								type="submit"
+								:disabled="searchPending"
+								class="search-button"
+							>
+								<SearchIcon v-if="!searchPending" />
+								<Spinner v-else />
+							</button>
+						</div>
+					</form>
+					<div class="trending-searches">
+						<div class="title">trending searches:</div>
+						<div class="tags">
+							<button :key="tag" @click="searchByTag(tag)" v-for="tag in tags">
+								{{ tag }}
+							</button>
+						</div>
 					</div>
-				</form>
-				<div class="trending-searches">
-					<div class="title">trending searches:</div>
-					<div class="tags">
-						<button :key="tag" @click="searchByTag(tag)" v-for="tag in tags">
-							{{ tag }}
-						</button>
-					</div>
+					<p class="title">Popular Categories</p>
 				</div>
-				<p class="title">Popular Categories</p>
+				<div class="searchCateroryItems">
+					<SearchCateroryItem
+						@closeMenu="closeMenu(item.brand)"
+						v-for="item in searchCateroryItems.data"
+						:title="item.brand"
+						:amount="5"
+						:ImageUrl="item.preview_images[0]"
+					/>
+				</div>
 			</div>
-			<div class="searchCateroryItems">
-				<SearchCateroryItem
-					@closeMenu="closeMenu(item.brand)"
-					v-for="item in searchCateroryItems.data"
-					:title="item.brand"
-					:amount="5"
-					:ImageUrl="item.preview_images[0]"
-				/>
-			</div>
-		</div>
+		</ClientOnly>
 	</Teleport>
 
 	<Teleport to="body">

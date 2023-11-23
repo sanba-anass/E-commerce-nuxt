@@ -33,6 +33,8 @@
 					:key="item.id"
 					:id="item.id"
 					:productId="item.product_id"
+					:size="item.size"
+					:colorName="item.colorName"
 				/>
 			</ul>
 			<div class="buttons">
@@ -62,6 +64,7 @@
 <script setup lang="ts">
 const { openCartDrawer } = useOpenCartDrawer();
 const supabase = useSupabaseClient();
+const user = useSupabaseUser();
 const isDeletingAllPending = ref(false);
 const isAddAllPending = ref(false);
 const products = useProductList();
@@ -93,15 +96,25 @@ async function addAllToCart() {
 			"id",
 			wishlist.value?.data?.map((product) => product.product_id)
 		);
-	let orderItemsToInsert = data?.map((product) => ({
-		product_id: product.id,
-		total_quantity: 1,
-		title: product.title,
-		image: product.detail_images[0],
-		price: product.price,
-		sku: product.sku,
-		size: product.size,
-	}));
+
+	// let items = data?.map((product) => ({
+	// 	total_quantity: 1,
+	// }));
+
+	console.log(wishlist.value?.data);
+	let orderItemsToInsert = wishlist.value?.data?.map((item) => {
+		return {
+			product_id: item?.product_id,
+			total_quantity: 1,
+			title: item?.title,
+			image: item?.image,
+			price: item?.price,
+			color_name: item?.colorName,
+			size: item?.size,
+			user_id: user.value.id,
+			sku: item.sku,
+		};
+	});
 
 	const { data: orderItems } = await supabase.from("order_item").select();
 	for (const item of orderItemsToInsert) {

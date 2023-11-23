@@ -120,7 +120,11 @@
 					src="images/payment-providers.webp"
 				/>
 				<div class="add-to-wishlist">
-					<FavouriteButton :id="currentProduct.data[0]?.id" />
+					<FavouriteButton
+						:colorName="colors[selectedColorIndex as number]?.colorName"
+						:id="currentProduct.data[0]?.id"
+						:size="sizes[selectedSizeIndex as number]?.size"
+					/>
 				</div>
 				<div class="social-section">
 					<div class="share">share:</div>
@@ -495,10 +499,10 @@ textarea:focus {
 const route = useRoute();
 
 const isSelectingImg = ref(false);
-const selectedColorIndex = ref<number | null>(null);
-const selectedSizeIndex = ref<number | null>(null);
+const selectedColorIndex = ref<number | null>(0);
+const selectedSizeIndex = ref<number | null>(0);
 const colors = ref([
-	{ color: "rgb(172,253,47)", colorName: "Green Yellow", isActive: false },
+	{ color: "rgb(172,253,47)", colorName: "Green Yellow", isActive: true },
 	{ color: "rgb(128,128,128)", colorName: "gray", isActive: false },
 	{ color: "rgb(198,132,177)", colorName: "Opera Mauve", isActive: false },
 	{ color: "rgb(217,182,154)", colorName: "Tan", isActive: false },
@@ -506,7 +510,7 @@ const colors = ref([
 ]);
 
 const sizes = ref([
-	{ size: "XS", isActive: false },
+	{ size: "XS", isActive: true },
 	{ size: "S", isActive: false },
 	{ size: "M", isActive: false },
 	{ size: "L", isActive: false },

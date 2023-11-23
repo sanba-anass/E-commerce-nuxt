@@ -13,14 +13,13 @@
 					class="title"
 					>{{ title }}</NuxtLink
 				>
-				<p class="sku">sku:{{ sku }}</p>
+				<p class="sku">sku: {{ sku }}</p>
+				<p class="sku">color: {{ colorName }}</p>
+				<p class="sku">size: {{ size }}</p>
 			</div>
 		</div>
 		<p class="price">${{ price.toFixed(2) }}</p>
 		<div class="buttons">
-			<button title="quick-view" class="quick-view">
-				<EyeIcon />
-			</button>
 			<button
 				:class="{ 'not-allowed': pending }"
 				:disabled="pending"
@@ -42,8 +41,11 @@ interface Props {
 	image: string;
 	id: number;
 	productId: string;
+	size: string;
+	colorName: string;
 }
-const { image, title, sku, price, id, productId } = defineProps<Props>();
+const { image, title, sku, price, id, productId, colorName, size } =
+	defineProps<Props>();
 const supabase = useSupabaseClient();
 const products = useProductList();
 const pending = ref(false);

@@ -9,15 +9,17 @@
 				<TrashIcon />
 				<p>Clear All</p>
 			</button>
-			<div class="filter-by-items">
-				<FilterByItem
-					v-for="(item, index) in filterByItems"
-					:title="item.title"
-					:index="index"
-				/>
+			<ClientOnly>
+				<div class="filter-by-items">
+					<LazyFilterByItem
+						v-for="(item, index) in filterByItems"
+						:title="item.title"
+						:index="index"
+					/>
+				</div>
+			</ClientOnly>
 			</div>
 		</div>
-	</div>
 </template>
 
 <script setup lang="ts">
@@ -97,5 +99,4 @@ h2 {
 	font-weight: 600;
 	margin-bottom: 3rem;
 }
-
 </style>

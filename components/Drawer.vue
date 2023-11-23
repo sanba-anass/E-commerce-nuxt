@@ -1,144 +1,145 @@
 <template>
-	<div class="drawer">
-		<nav>
-			<div class="input-wrapper">
-				<input
-					class="search-input"
-					type="text"
-					name=""
-					v-model="searchTerm"
-					id=""
-					placeholder="Search for..."
-				/>
-				<button class="search-icon" @click="() => searchProductByTitle()">
-					<SearchIcon />
-				</button>
-			</div>
-			<ul>
-				<li>
-					<NuxtLink to="/" class="nav-link">home</NuxtLink>
-				</li>
-				<li class="collabsable-button-shop">
-					<div @click="iscollabsbledShop = !iscollabsbledShop" class="flex">
-						<NuxtLink class="nav-link shop">shop </NuxtLink>
-						<button class="plus-btn">
-							<PlusIcon v-if="iscollabsbledShop" />
-							<ClientOnly v-else>
-								<MinusIcon />
-							</ClientOnly>
-						</button>
-					</div>
-					<div>
-						<div
-							v-if="!iscollabsbledShop"
-							:class="{
-								'collabsable-shop-content': !discover && !catigories,
-								'margin-shop': !(!discover && !catigories),
-							}"
-						>
+		<div class="drawer">
+			<nav>
+				<div class="input-wrapper">
+					<input
+						class="search-input"
+						type="text"
+						name=""
+						v-model="searchTerm"
+						id=""
+						placeholder="Search for..."
+					/>
+					<button class="search-icon" @click="() => searchProductByTitle()">
+						<SearchIcon />
+					</button>
+				</div>
+				<ul>
+					<li>
+						<NuxtLink to="/" class="nav-link">home</NuxtLink>
+					</li>
+					<li class="collabsable-button-shop">
+						<div @click="iscollabsbledShop = !iscollabsbledShop" class="flex">
+							<NuxtLink class="nav-link shop">shop </NuxtLink>
+							<button class="plus-btn">
+								<PlusIcon v-if="iscollabsbledShop" />
+								<ClientOnly v-else>
+									<MinusIcon />
+								</ClientOnly>
+							</button>
+						</div>
+						<div>
 							<div
-								:class="{ 'proper-h': !iscollabsbledShop }"
-								v-if="!discover && !catigories"
-								class="shop-links"
+								v-if="!iscollabsbledShop"
+								:class="{
+									'collabsable-shop-content': !discover && !catigories,
+									'margin-shop': !(!discover && !catigories),
+								}"
 							>
-								<NuxtLink
-									@click="discover = true"
-									class="nav-link inner-shop-link"
-									>Discover
-								</NuxtLink>
+								<div
+									:class="{ 'proper-h': !iscollabsbledShop }"
+									v-if="!discover && !catigories"
+									class="shop-links"
+								>
+									<NuxtLink
+										@click="discover = true"
+										class="nav-link inner-shop-link"
+										>Discover
+									</NuxtLink>
 
-								<NuxtLink
-									@click="
-										discover = false;
-										catigories = true;
-									"
-									class="nav-link inner-shop-link"
-									>catigories
-								</NuxtLink>
-							</div>
-							<div class="nested-discover-links" v-if="discover">
-								<button @click="discover = false" class="back-button-menu">
-									back
-								</button>
-								<div class="nested-discover-links wrapper">
-									<NuxtLink class="nav-link">All Products</NuxtLink>
-									<NuxtLink class="nav-link">New In</NuxtLink>
-									<NuxtLink class="nav-link">Best Sellers</NuxtLink>
-									<NuxtLink class="nav-link">Last Piece</NuxtLink>
+									<NuxtLink
+										@click="
+											discover = false;
+											catigories = true;
+										"
+										class="nav-link inner-shop-link"
+										>catigories
+									</NuxtLink>
 								</div>
-							</div>
+								<div class="nested-discover-links" v-if="discover">
+									<button @click="discover = false" class="back-button-menu">
+										back
+									</button>
+									<div class="nested-discover-links wrapper">
+										<NuxtLink class="nav-link">All Products</NuxtLink>
+										<NuxtLink class="nav-link">New In</NuxtLink>
+										<NuxtLink class="nav-link">Best Sellers</NuxtLink>
+										<NuxtLink class="nav-link">Last Piece</NuxtLink>
+									</div>
+								</div>
 
-							<div v-if="catigories">
-								<button @click="catigories = false" class="back-button-menu">
-									back
-								</button>
-								<div class="nested-discover-links wrapper">
-									<NuxtLink class="nav-link">Coats & Long Jackets</NuxtLink>
-									<NuxtLink class="nav-link">Dresses</NuxtLink>
-									<NuxtLink class="nav-link">Blazers</NuxtLink>
-									<NuxtLink class="nav-link">Tops</NuxtLink>
-									<NuxtLink class="nav-link">Pants</NuxtLink>
-									<NuxtLink class="nav-link">Skirts</NuxtLink>
-									<NuxtLink class="nav-link">Accessories</NuxtLink>
-									<NuxtLink class="nav-link">Knitwear</NuxtLink>
-									<NuxtLink class="nav-link">Shorts</NuxtLink>
-									<NuxtLink class="nav-link">Swimwear</NuxtLink>
+								<div v-if="catigories">
+									<button @click="catigories = false" class="back-button-menu">
+										back
+									</button>
+									<div class="nested-discover-links wrapper">
+										<NuxtLink class="nav-link">Coats & Long Jackets</NuxtLink>
+										<NuxtLink class="nav-link">Dresses</NuxtLink>
+										<NuxtLink class="nav-link">Blazers</NuxtLink>
+										<NuxtLink class="nav-link">Tops</NuxtLink>
+										<NuxtLink class="nav-link">Pants</NuxtLink>
+										<NuxtLink class="nav-link">Skirts</NuxtLink>
+										<NuxtLink class="nav-link">Accessories</NuxtLink>
+										<NuxtLink class="nav-link">Knitwear</NuxtLink>
+										<NuxtLink class="nav-link">Shorts</NuxtLink>
+										<NuxtLink class="nav-link">Swimwear</NuxtLink>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-				</li>
-				<li>
-					<div
-						@click="iscollabsbledCollections = !iscollabsbledCollections"
-						class="flex collection"
-					>
-						<NuxtLink class="nav-link">collections</NuxtLink>
-						<button class="plus-btn">
-							<PlusIcon v-if="iscollabsbledCollections" />
-							<ClientOnly v-else>
-								<MinusIcon />
-							</ClientOnly>
-						</button>
-					</div>
-					<div
-						:class="{ 'expande-collections': !iscollabsbledCollections }"
-						class="collabsable-collections"
-					>
-						<div class="collabsable-content" v-if="!iscollabsbledCollections">
-							<NuxtLink class="nav-link collection-link"
-								>FALL WINTER 2023</NuxtLink
-							>
-							<NuxtLink class="nav-link collection-link"
-								>SPRING SUMMER 2023</NuxtLink
-							>
+					</li>
+					<li>
+						<div
+							@click="iscollabsbledCollections = !iscollabsbledCollections"
+							class="flex collection"
+						>
+							<NuxtLink class="nav-link">collections</NuxtLink>
+							<button class="plus-btn">
+								<PlusIcon v-if="iscollabsbledCollections" />
+								<ClientOnly v-else>
+									<MinusIcon />
+								</ClientOnly>
+							</button>
 						</div>
-					</div>
-				</li>
+						<div
+							:class="{ 'expande-collections': !iscollabsbledCollections }"
+							class="collabsable-collections"
+						>
+							<div class="collabsable-content" v-if="!iscollabsbledCollections">
+								<NuxtLink class="nav-link collection-link"
+									>FALL WINTER 2023</NuxtLink
+								>
+								<NuxtLink class="nav-link collection-link"
+									>SPRING SUMMER 2023</NuxtLink
+								>
+							</div>
+						</div>
+					</li>
 
-				<li><NuxtLink class="nav-link">about</NuxtLink></li>
-				<li><NuxtLink to="/blogs" class="nav-link">blogs</NuxtLink></li>
+					<li><NuxtLink class="nav-link">about</NuxtLink></li>
+					<li><NuxtLink to="/blogs" class="nav-link">blogs</NuxtLink></li>
+				</ul>
+				<ul class="secondary-links">
+					<li>
+						<NuxtLink>Retailers</NuxtLink>
+					</li>
+					<li><NuxtLink>Contact</NuxtLink></li>
+					<li>
+						<NuxtLink to="/account/login">Account</NuxtLink>
+					</li>
+					<li>
+						<NuxtLink to="/wishlist">wishlist</NuxtLink>
+					</li>
+				</ul>
+			</nav>
+			<ul class="social-links">
+				<NuxtLink><FacebookIcon /></NuxtLink>
+				<NuxtLink><InstagramIcon /> </NuxtLink>
+				<NuxtLink><PinterestIcon /></NuxtLink>
+				<NuxtLink><YoutubeIcon /></NuxtLink>
 			</ul>
-			<ul class="secondary-links">
-				<li>
-					<NuxtLink>Retailers</NuxtLink>
-				</li>
-				<li><NuxtLink>Contact</NuxtLink></li>
-				<li>
-					<NuxtLink to="/account/login">Account</NuxtLink>
-				</li>
-				<li>
-					<NuxtLink to="/wishlist">wishlist</NuxtLink>
-				</li>
-			</ul>
-		</nav>
-		<ul class="social-links">
-			<NuxtLink><FacebookIcon /></NuxtLink>
-			<NuxtLink><InstagramIcon /> </NuxtLink>
-			<NuxtLink><PinterestIcon /></NuxtLink>
-			<NuxtLink><YoutubeIcon /></NuxtLink>
-		</ul>
-	</div>
+		</div>
+	
 </template>
 
 <script setup lang="ts">
@@ -196,8 +197,7 @@ const searchProductByTitle = async (execute = true) => {
 		});
 
 	products.value = data;
-	closeNavDrawer()
-	
+	closeNavDrawer();
 };
 
 if (route.query?.q !== undefined && route.query?.q !== "") {

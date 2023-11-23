@@ -30,7 +30,7 @@
 					@click="
 						productId = id;
 						favId = id;
-						console.log(id)
+						console.log(id);
 						openProductDrawer();
 
 						ScrollToTop();
@@ -39,7 +39,7 @@
 				>
 					Quick Shop
 				</button>
-				<FavouriteButton :id="id" />
+				<FavouriteButton size="XS" colorName="GREEN YELLOW" :id="id" />
 			</div>
 		</div>
 		<div class="slider-item-content">

@@ -38,8 +38,8 @@
 						:title="product.title"
 						:price="product.price"
 						:oldPrice="null"
-						:id="product.id"
-						:key="product.id"
+						:id="product?.id"
+						:key="product?.id"
 						:rating="product.rating"
 					/>
 				</div>
@@ -83,16 +83,16 @@ const { data: products } = await useAsyncData(async () => {
 		.from("product")
 		.select("*")
 		.range(from.value, to.value)
+		.order("created_at", { ascending: true })
 		.eq("category", "Best Sellers");
 });
+
 const _products = useProductList();
 _products.value = products.value?.data;
 const filter = useCookie("filter", {
-	default: () => selectedFilter.value,
+	default: () => selectedFilter,
 });
-onMounted(() => {
-	selectedFilter.value = filter.value;
-});
+
 watch(
 	[from, to, selectedFilter],
 	async ([newFrom, newTo, newSelectedFilter]) => {

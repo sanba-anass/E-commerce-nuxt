@@ -120,9 +120,11 @@
 					<div v-if="!user" class="buttons-overlay"></div>
 				</div>
 				<div class="add-to-wishlist">
-					<FavouriteButton :id="favId" />
-
-					<NuxtLink> add to wishlist</NuxtLink>
+					<FavouriteButton
+						:colorName="colors[selectedColorIndex as number]?.colorName"
+						:size="sizes[selectedSizeIndex as number]?.size"
+						:id="favId"
+					/>
 				</div>
 				<div class="category">
 					<span>category:</span>{{ props.product?.category }}
@@ -163,10 +165,10 @@ const supabase = useSupabaseClient();
 const { toastId, isFavouriteItem, open } = useToast(30);
 const { openDialog } = useDialog();
 const user = useSupabaseUser();
-const selectedColorIndex = ref<number | null>(null);
-const selectedSizeIndex = ref<number | null>(null);
+const selectedColorIndex = ref<number | null>(0);
+const selectedSizeIndex = ref<number | null>(0);
 const colors = ref([
-	{ color: "rgb(172,253,47)", colorName: "Green Yellow", isActive: false },
+	{ color: "rgb(172,253,47)", colorName: "Green Yellow", isActive: true },
 	{ color: "rgb(128,128,128)", colorName: "gray", isActive: false },
 	{ color: "rgb(198,132,177)", colorName: "Opera Mauve", isActive: false },
 	{ color: "rgb(217,182,154)", colorName: "Tan", isActive: false },
@@ -174,7 +176,7 @@ const colors = ref([
 ]);
 
 const sizes = ref([
-	{ size: "XS", isActive: false },
+	{ size: "XS", isActive: true },
 	{ size: "S", isActive: false },
 	{ size: "M", isActive: false },
 	{ size: "L", isActive: false },

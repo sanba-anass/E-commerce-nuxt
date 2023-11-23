@@ -3,8 +3,13 @@
 		<NuxtLoadingIndicator color="#E6733E" />
 
 		<NavBar />
-		<CartDrawer />
-		<Dialog />
+		<ClientOnly>
+			<CartDrawer />
+		</ClientOnly>
+		<ClientOnly>
+			<Dialog />
+		</ClientOnly>
+
 		<ProductDrawer v-if="productId" :product="currentProduct2" />
 		<div
 			@click="
@@ -15,14 +20,15 @@
 			class="overlay"
 		></div>
 		<NuxtPage />
-
-		<Toast
-			v-if="currentProduct"
-			:title="currentProduct?.title"
-			:image-url="currentProduct?.preview_images[0]"
-			text="Go to wishlist"
-			:duration="25"
-		/>
+		<ClientOnly>
+			<Toast
+				v-if="currentProduct"
+				:title="currentProduct?.title"
+				:image-url="currentProduct?.preview_images[0]"
+				text="Go to wishlist"
+				:duration="25"
+			/>
+		</ClientOnly>
 
 		<Footer />
 	</NuxtLayout>
@@ -32,6 +38,8 @@ const { isDrawerOpen, closeCartDrawer } = useOpenCartDrawer();
 const { toastId } = useToast(30);
 const { productId } = useProductDrawer();
 const products = useProductList();
+const supabase = useSupabaseClient();
+const user = useSupabaseUser();
 const { isDrawerOpen: _isDrawerOpen, closeProductDrawer } = useProductDrawer();
 const currentProduct = computed(() =>
 	products.value.find((product) => product.id === toastId.value)
@@ -40,6 +48,14 @@ const currentProduct = computed(() =>
 const currentProduct2 = computed(() =>
 	products.value.find((product) => product.id === productId.value)
 );
+if (user) {
+	await supabase
+		.from("product")
+		.update({
+			user_id: user.value?.id,
+		})
+		.neq("title", "0");
+}
 </script>
 <style>
 * {
@@ -111,5 +127,4 @@ input[type="checkbox"] {
 .loading-indicator {
 	background-color: black;
 }
-
 </style>
