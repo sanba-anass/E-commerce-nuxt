@@ -21,7 +21,7 @@
 			</li>
 			<li>
 				<a
-					:to="`/shop?page=${1}`"
+					:href="`/shop?page=${1}`"
 					:active-class="'active-style'"
 					@mouseenter="
 						isVisible = true;
