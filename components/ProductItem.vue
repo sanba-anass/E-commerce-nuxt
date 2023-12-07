@@ -50,10 +50,7 @@
 				<div class="price old">
 					{{ oldPrice ? "$" : "" }} {{ oldPrice?.toFixed(2) }}
 				</div>
-				<div class="price">
-					${{ price.toFixed(2) }} {{ availability }} {{ productType }}
-					{{ brand }}
-				</div>
+				<div class="price">${{ price.toFixed(2) }}</div>
 			</div>
 		</div>
 	</div>
