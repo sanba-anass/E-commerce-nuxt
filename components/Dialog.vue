@@ -1,5 +1,5 @@
 <template>
-	<div @click="closeDialog" v-if="isOpen" class="dialog-overlay">
+	<div @click.self="closeDialog" v-if="isOpen" class="dialog-overlay">
 		<div class="dialog">
 			<div class="dialog-header">
 				<h2>{{ title }}</h2>
