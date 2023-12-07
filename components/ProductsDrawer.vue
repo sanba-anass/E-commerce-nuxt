@@ -5,10 +5,7 @@
 				<FilterIcon />
 				<h2>FILTER BY</h2>
 			</div>
-			<button class="clear-button">
-				<TrashIcon />
-				<p>Clear All</p>
-			</button>
+
 			<ClientOnly>
 				<div class="filter-by-items">
 					<LazyFilterByItem
