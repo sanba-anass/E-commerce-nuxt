@@ -2,6 +2,13 @@ export const usePagination = () => {
 	const from = useState(() => 0);
 	const to = useState(() => 11);
 	const size = 12;
+	const isVisible = useState(() => true);
+	function hidePagination() {
+		isVisible.value = false;
+	}
+	function showPagination() {
+		isVisible.value = true;
+	}
 
 	function changePage(n: number) {
 		from.value = size * (n - 1);
@@ -15,7 +22,6 @@ export const usePagination = () => {
 		}
 		from.value += size;
 		to.value += size;
-		console.log(from.value + "," + to.value + "next");
 	};
 	const previousPage = () => {
 		if (from.value <= 0) {
@@ -24,8 +30,15 @@ export const usePagination = () => {
 		from.value -= size;
 
 		to.value -= size;
-
-		console.log(from.value + "," + to.value + "previous");
 	};
-	return { from, to, nextPage, previousPage, changePage };
+	return {
+		from,
+		to,
+		nextPage,
+		previousPage,
+		changePage,
+		showPagination,
+		hidePagination,
+		isVisible
+	};
 };

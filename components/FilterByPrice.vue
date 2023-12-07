@@ -9,23 +9,10 @@
 <script setup lang="ts">
 const products = useProductList();
 const supabase = useSupabaseClient();
-const minPrice = ref(0);
-const maxPrice = ref(156);
-watch([minPrice, maxPrice], async ([newMinPrice, newMaxPrice]) => {
-	const prices = Array.from(
-		{ length: newMaxPrice + newMinPrice },
-		(_, k) => k
-	).slice(minPrice.value, maxPrice.value + 1);
+const minPrice = useCookie("minPrice", { default: () => 0 });
+const maxPrice = useCookie("maxPrice", { default: () => 156 });
 
-	const { data } = await supabase
-		.from("product")
-		.select("*")
-		.in("price", prices)
-		.order("price", { ascending: true });
 
-	products.value = data as never[];
-	console.log(products.value);
-});
 
 </script>
 

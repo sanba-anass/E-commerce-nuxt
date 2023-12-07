@@ -260,6 +260,7 @@
 						:title="item.brand"
 						:amount="5"
 						:ImageUrl="item.preview_images[0]"
+						@click="hidePagination"
 					/>
 				</div>
 			</div>
@@ -280,6 +281,8 @@ const pending = useAddCartPending();
 const products = useProductList();
 const route = useRoute();
 const router = useRouter();
+const { hidePagination } = usePagination();
+
 const searchTerm = ref(route.query?.q?.split(" ").join(" or "));
 const searchTermFilled = computed(() => searchTerm?.value?.length > 0);
 const isVisibleSearchMenu = ref(false);
@@ -291,6 +294,7 @@ const { data: allOrderItems } = await useAsyncData(
 const { data: allWishlist } = await useAsyncData(
 	async () => await supabase.from("wishlist").select("*", { count: "exact" })
 );
+
 const closeMenu = async (item: string) => {
 	searchPending.value = true;
 	await router.replace(`/shop?page=1&q=${item}`);
@@ -335,6 +339,7 @@ const searchProductByTitle = async (execute = true) => {
 	products.value = data;
 	searchPending.value = false;
 	isVisibleSearchMenu.value = false;
+	hidePagination();
 };
 
 if (route.query?.q !== undefined && route.query?.q !== "") {
@@ -364,6 +369,7 @@ const searchByTag = async (item: string) => {
 	products.value = data;
 	searchPending.value = false;
 	isVisibleSearchMenu.value = false;
+	hidePagination();
 };
 const tags = ["shirt", "cotton", "jacket", "jumper", "Coat"];
 

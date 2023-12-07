@@ -18,8 +18,8 @@
 					/>
 				</div>
 			</ClientOnly>
-			</div>
 		</div>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -43,9 +43,6 @@ const filterByItems = [
 	},
 	{
 		title: "size",
-	},
-	{
-		title: "tags",
 	},
 ];
 </script>

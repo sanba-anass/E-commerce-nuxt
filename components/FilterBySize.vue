@@ -2,39 +2,36 @@
 	<div class="items">
 		<div class="item" v-for="size in sizes">
 			<div class="input">
-				<input :value="size" :id="size" v-model="_sizes" type="checkbox" />
+				<input
+					@input="
+						($event) => {
+							addToFilterValues(size, $event.currentTarget.checked);
+						}
+					"
+					:value="size"
+					:id="size"
+					v-model="cookieSizes"
+					type="checkbox"
+				/>
 				<label :for="size">{{ size }}</label>
 			</div>
 		</div>
 	</div>
-	
-	<button @click="reset" class="reset-button">Reset</button>
 </template>
 
 <script setup lang="ts">
-const _sizes = ref([]);
-
-const products = useProductList();
-const supabase = useSupabaseClient();
 const sizes = ["XS", "S", "M", "L", "XL", "XXL", "X"];
-watch(_sizes, async (newSizes) => {
-	if (newSizes.length === 0) {
-		const { data: defaultProducts } = await supabase
-			.from("product")
-			.select("*")
-			.range(0, 11);
-		products.value = defaultProducts;
+const filterValues = useCookie("filterValues");
+const cookieSizes = useCookie("cookieSizes", { default: () => [] });
+
+function addToFilterValues(checkboxValue: string, checked: boolean) {
+	if (!checked) {
+		filterValues.value.splice(filterValues.value?.indexOf(checkboxValue),1);
+		console.log(filterValues.value);
 		return;
 	}
-	const { data: newProducts } = await supabase
-		.from("product")
-		.select("*")
-		.in("size", newSizes);
-	products.value = newProducts;
-});
-function reset() {
-	_sizes.value = [];
-	
+	filterValues.value?.push(checkboxValue);
+	console.log(filterValues.value);
 }
 </script>
 <style scoped>

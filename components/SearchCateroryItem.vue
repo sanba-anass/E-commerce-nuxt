@@ -51,7 +51,7 @@ span {
 	transition: 0.3s;
 	flex: 1;
 	width: 100%;
-	height: 220px;
+	height: 190px;
 	object-fit: cover;
 	object-position: TOP;
 }

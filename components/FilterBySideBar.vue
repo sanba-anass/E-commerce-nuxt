@@ -37,9 +37,6 @@ const filterByItems = [
 	{
 		title: "size",
 	},
-	{
-		title: "tags",
-	},
 ];
 </script>
 

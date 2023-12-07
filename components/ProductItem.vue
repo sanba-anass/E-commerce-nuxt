@@ -5,11 +5,7 @@
 				<NuxtLink
 					:to="`/shop/${title.split(' ').join('-')}?page=${1}&id=${id}`"
 				>
-					<NuxtImg
-						placeholder="images/placeholder.svg"
-						loading="lazy"
-						:src="!switchImage ? url1 : url2"
-					/>
+					<NuxtImg loading="lazy" :src="!switchImage ? url1 : url2" />
 				</NuxtLink>
 				<div
 					@click.self="
@@ -54,7 +50,10 @@
 				<div class="price old">
 					{{ oldPrice ? "$" : "" }} {{ oldPrice?.toFixed(2) }}
 				</div>
-				<div class="price">${{ price.toFixed(2) }}</div>
+				<div class="price">
+					${{ price.toFixed(2) }} {{ availability }} {{ productType }}
+					{{ brand }}
+				</div>
 			</div>
 		</div>
 	</div>
@@ -75,9 +74,23 @@ interface Props {
 	oldPrice: number | null;
 	id: string;
 	rating: number;
+	availability: string;
+	productType: string;
+	brand: string;
 }
 
-const { url1, url2, title, price, oldPrice, id, rating } = defineProps<Props>();
+const {
+	url1,
+	url2,
+	title,
+	price,
+	oldPrice,
+	id,
+	rating,
+	availability,
+	productType,
+	brand,
+} = defineProps<Props>();
 const { productId, openProductDrawer, closeProductDrawer, favId } =
 	useProductDrawer();
 const { ScrollToTop } = useScrollToTop();

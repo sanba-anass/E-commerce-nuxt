@@ -30,9 +30,10 @@
 				<h2 class="error-message" v-if="_products?.length === 0">
 					no Products Found!
 				</h2>
+
 				<div v-else class="shop-items slider">
 					<ProductItem
-						v-for="product in _products"
+						v-for="product in prods"
 						:url1="product.preview_images[0]"
 						:url2="product.preview_images[1]"
 						:title="product.title"
@@ -41,6 +42,9 @@
 						:id="product?.id"
 						:key="product?.id"
 						:rating="product.rating"
+						:availability="product.availability"
+						:productType="product.product_type"
+						:brand="product.brand"
 					/>
 				</div>
 				<Pagination :filter="selectedFilter" />
@@ -61,240 +65,230 @@ import { Grid3Icon } from "#components";
 const supabase = useSupabaseClient();
 
 const count = useCount();
-const user = useSupabaseUser();
 
 const route = useRoute();
 
-const { from, to } = usePagination();
+const { from, to, showPagination, hidePagination } = usePagination();
 const productFilterOptions = [
-	"Best selling",
+	"Best Sellers",
 	"Featured",
-	"alphabetically A-Z",
-	"alphabetically Z-A",
-	"price, low to high",
-	"price, high to low",
-	"date old to new",
-	"date new to old",
+	"New Arrivals",
+	// "alphabetically A-Z",
+	// "alphabetically Z-A",
+	// "price, low to high",
+	// "price, high to low",
+	// "date old to new",
+	// "date new to old",
 ];
 
-const selectedFilter = ref("Best selling");
-const { data: products } = await useAsyncData(async () => {
+const _products = useProductList();
+
+const filter = useCookie("filter", {
+	default: () => "Best Sellers",
+});
+const selectedFilter = ref(filter.value);
+const filterValues = useCookie("filterValues", {
+	default: () => [selectedFilter.value],
+});
+watch(
+	selectedFilter,
+	() => {
+		filter.value = selectedFilter.value;
+		filterValues.value[0] = filter.value;
+	},
+	{ immediate: true }
+);
+
+watch(selectedFilter, (newValue) => {
+	console.log(filterValues.value);
+});
+
+console.log("filterValues", filterValues.value);
+const minPrice = useCookie<number>("minPrice");
+const maxPrice = useCookie<number>("maxPrice");
+
+const prices = computed(() =>
+	Array.from({ length: maxPrice.value + minPrice.value }, (_, k) => k).slice(
+		minPrice.value,
+		maxPrice.value + 1
+	)
+);
+const { data } = await useAsyncData(async () => {
 	return await supabase
 		.from("product")
 		.select("*")
 		.range(from.value, to.value)
-		.order("created_at", { ascending: true })
-		.eq("category", "Best Sellers");
+		.eq("category", filter.value);
 });
 
-const _products = useProductList();
-_products.value = products.value?.data;
-const filter = useCookie("filter", {
-	default: () => selectedFilter,
-});
+_products.value = data.value?.data;
 
+const prods = computed(() =>
+	_products.value.filter(
+		({ price }) => price <= maxPrice.value && price >= minPrice.value
+	)
+);
+watch(maxPrice, () => {
+	console.log(maxPrice.value.toString().length);
+});
+watch(
+	[minPrice, maxPrice],
+	() => {
+		if (prods.value.length <= 10) {
+			hidePagination();
+		}
+		else{
+			showPagination()
+		}
+	},
+	{ immediate: true }
+);
 watch(
 	[from, to, selectedFilter],
-	async ([newFrom, newTo, newSelectedFilter]) => {
+	async ([newFrom]) => {
 		if (newFrom > 24) {
 			return;
 		}
 		if (newFrom < 0) {
 			return;
 		}
-		switch (newSelectedFilter) {
-			case "Featured":
-				const { data: featuredProducts } = await useAsyncData(async () => {
-					return await supabase
-						.from("product")
-						.select("*")
-						.range(from.value, to.value)
-						.eq("category", "Featured Products");
-				});
-				_products.value = featuredProducts.value?.data;
+		const { data } = await useAsyncData(async () => {
+			return await supabase
+				.from("product")
+				.select("*")
+				.eq("category", filter.value)
+				.in("price", prices.value)
+				.order("price", { ascending: true })
+				.range(from.value, to.value);
+		});
+		_products.value = data.value?.data;
+	},
+	{ immediate: true }
+);
+async function filterProducts() {
+	if (filterValues.value.length === 1) {
+		const { data } = await supabase
+			.from("product")
+			.select("*")
+			.eq("category", filter.value)
+			.in("price", prices.value)
+			.order("price", { ascending: true })
+			.range(from.value, to.value);
 
-				break;
-			case "Best selling":
-				const { data: bestSellingProducts } = await useAsyncData(async () => {
-					return await supabase
-						.from("product")
-						.select("*")
-						.range(from.value, to.value)
-						.eq("category", "Best Sellers");
-				});
-				_products.value = bestSellingProducts.value?.data;
-				break;
-			case "alphabetically A-Z":
-				const { data: AtoZProducts } = await useAsyncData(async () => {
-					return await supabase
-						.from("product")
-						.select("*")
-						.range(from.value, to.value)
-						.order("title", { ascending: true });
-				});
-				_products.value = AtoZProducts.value?.data;
-				break;
-			case "alphabetically Z-A":
-				const { data: ZtoAProducts } = await useAsyncData(async () => {
-					return await supabase
-						.from("product")
-						.select("*")
-						.range(from.value, to.value)
-						.order("title", { ascending: false });
-				});
-				_products.value = ZtoAProducts.value?.data;
-				break;
-			case "price, low to high":
-				const { data: lowtoHighPriceProducts } = await useAsyncData(
-					async () => {
-						return await supabase
-							.from("product")
-							.select("*")
-							.range(from.value, to.value)
-							.order("price", { ascending: true });
-					}
-				);
-				_products.value = lowtoHighPriceProducts.value?.data;
+		_products.value = data;
+	} else {
+		const { data } = await supabase
+			.from("product")
+			.select("*")
+			.eq("category", filter.value)
+			.in("price", prices.value)
+			.order("price", { ascending: true });
 
-				break;
-			case "price, high to low":
-				const { data: hightoLowPriceProducts } = await useAsyncData(
-					async () => {
-						return await supabase
-							.from("product")
-							.select("*")
-							.range(from.value, to.value)
-							.order("price", { ascending: false });
-					}
-				);
-				_products.value = hightoLowPriceProducts.value?.data;
-				break;
-			case "date old to new":
-				const { data: oldToNewProducts } = await useAsyncData(async () => {
-					return await supabase
-						.from("product")
-						.select("*")
-						.range(from.value, to.value)
-						.order("created_at", { ascending: false });
-				});
-				_products.value = oldToNewProducts.value?.data;
-				break;
-			case "date new to old":
-				const { data: newToOldProducts } = await useAsyncData(async () => {
-					return await supabase
-						.from("product")
-						.select("*")
-						.range(from.value, to.value)
-						.order("created_at", { ascending: true });
-				});
-				_products.value = newToOldProducts.value?.data;
-				break;
+		_products.value = data;
+
+		if (
+			filterValues.value.includes("inStock") ||
+			filterValues.value.includes("outStock")
+		) {
+			_products.value = _products.value.filter(({ availability }) => {
+				return filterValues.value.includes(availability);
+			});
+		}
+		if (
+			filterValues.value.includes("Blouses") ||
+			filterValues.value.includes("Denim") ||
+			filterValues.value.includes("Jacket") ||
+			filterValues.value.includes("T-Shirt") ||
+			filterValues.value.includes("Trousers") ||
+			filterValues.value.includes("Dresses")
+		) {
+			_products.value = _products.value.filter(({ product_type }) => {
+				return filterValues.value.includes(product_type);
+			});
+		}
+
+		if (
+			filterValues.value.includes("Burberry") ||
+			filterValues.value.includes("Kenzo") ||
+			filterValues.value.includes("Louis Vuitton") ||
+			filterValues.value.includes("Police") ||
+			filterValues.value.includes("Tomford") ||
+			filterValues.value.includes("Vinova")
+		) {
+			_products.value = _products.value?.filter(({ brand }) =>
+				filterValues.value.includes(brand)
+			);
+		}
+		if (
+			filterValues.value.includes("rgb(0,0,0)") ||
+			filterValues.value.includes("rgb(36,55,79)") ||
+			filterValues.value.includes("rgb(85,107,47)") ||
+			filterValues.value.includes("rgb(172,253,47)") ||
+			filterValues.value.includes("rgb(100,149,237)") ||
+			filterValues.value.includes("rgb(128,128,128)") ||
+			filterValues.value.includes("rgb(217,182,154)") ||
+			filterValues.value.includes("rgb(231,166,72)") ||
+			filterValues.value.includes("rgb(198,132,177)") ||
+			filterValues.value.includes("rgb(255,255,255)") ||
+			filterValues.value.includes("rgb(250,240,230)")
+		) {
+			_products.value = _products.value?.filter(({ color }) =>
+				filterValues.value.includes(color)
+			);
+		}
+		if (
+			filterValues.value.includes("Burberry") ||
+			filterValues.value.includes("Kenzo") ||
+			filterValues.value.includes("Louis Vuitton") ||
+			filterValues.value.includes("Police") ||
+			filterValues.value.includes("Tomford") ||
+			filterValues.value.includes("Vinova")
+		) {
+			_products.value = _products.value?.filter(({ brand }) =>
+				filterValues.value.includes(brand)
+			);
+		}
+		if (
+			filterValues.value.includes("XS") ||
+			filterValues.value.includes("S") ||
+			filterValues.value.includes("M") ||
+			filterValues.value.includes("XL") ||
+			filterValues.value.includes("L") ||
+			filterValues.value.includes("XXL") ||
+			filterValues.value.includes("X")
+		) {
+			_products.value = _products.value.filter(({ size }) => {
+				return filterValues.value.includes(size);
+			});
 		}
 	}
-);
-
-const router = useRouter();
-
-watch(selectedFilter, async (newValue) => {
-	from.value = 0;
-	to.value = 11;
-	count.value = 1;
-	router.push(`/shop?page=${count.value}`);
-	count.value = 1;
-	switch (newValue) {
-		case "Featured":
-			const { data: featuredProducts } = await useAsyncData(async () => {
-				return await supabase
-					.from("product")
-					.select("*")
-					.range(from.value, to.value)
-					.eq("category", "Featured Products");
-			});
-			_products.value = featuredProducts.value?.data;
-
-			break;
-		case "Best selling":
-			const { data: bestSellingProducts } = await useAsyncData(async () => {
-				return await supabase
-					.from("product")
-					.select("*")
-					.range(from.value, to.value)
-					.eq("category", "Best Sellers");
-			});
-			_products.value = bestSellingProducts.value?.data;
-			break;
-		case "alphabetically A-Z":
-			const { data: AtoZProducts } = await useAsyncData(async () => {
-				return await supabase
-					.from("product")
-					.select("*")
-					.range(from.value, to.value)
-					.order("title", { ascending: true });
-			});
-			_products.value = AtoZProducts.value?.data;
-
-			break;
-		case "alphabetically Z-A":
-			const { data: ZtoAProducts } = await useAsyncData(async () => {
-				return await supabase
-					.from("product")
-					.select("*")
-					.range(from.value, to.value)
-					.order("title", { ascending: false });
-			});
-			_products.value = ZtoAProducts.value?.data;
-
-			break;
-		case "price, low to high":
-			const { data: lowtoHighPriceProducts } = await useAsyncData(async () => {
-				return await supabase
-					.from("product")
-					.select("*")
-					.range(from.value, to.value)
-					.order("price", { ascending: true });
-			});
-			_products.value = lowtoHighPriceProducts.value?.data;
-
-			break;
-		case "price, high to low":
-			const { data: hightoLowPriceProducts } = await useAsyncData(async () => {
-				return await supabase
-					.from("product")
-					.select("*")
-					.range(from.value, to.value)
-					.order("price", { ascending: false });
-			});
-			_products.value = hightoLowPriceProducts.value?.data;
-
-			break;
-		case "date old to new":
-			const { data: oldToNewProducts } = await useAsyncData(async () => {
-				return await supabase
-					.from("product")
-					.select("*")
-					.range(from.value, to.value)
-					.order("created_at", { ascending: false });
-			});
-			_products.value = oldToNewProducts.value?.data;
-
-			break;
-		case "date new to old":
-			const { data: newToOldProducts } = await useAsyncData(async () => {
-				return await supabase
-					.from("product")
-					.select("*")
-					.range(from.value, to.value)
-					.order("created_at", { ascending: true });
-			});
-			_products.value = newToOldProducts.value?.data;
-
-			break;
-	}
-});
-watch(selectedFilter, (newValue) => {
+}
+watch(filterValues, async () => {}, { deep: true, immediate: true });
+watch(selectedFilter, () => {
 	filter.value = selectedFilter.value;
 });
-const isFavourite = ref(false);
+watch(
+	[filterValues, selectedFilter],
+	async () => {
+		const { data } = await supabase
+			.from("product")
+			.select("*")
+			.eq("category", filter.value)
+			.in("price", prices.value)
+			.order("price", { ascending: true });
+		console.log("categories", data?.length);
+		filterProducts();
+		if (filterValues.value.length > 1 || data?.length <= 12) {
+			hidePagination();
+		} else {
+			showPagination();
+		}
+	},
+	{
+		deep: true,
+		immediate: true,
+	}
+);
 
 const cols = ref(3);
 const icons = shallowRef([

@@ -9,12 +9,12 @@
 		<main class="cart-content">
 			<div>
 				<ul
-					:class="{ 'border-bottom': orderItems?.data.length === 3 }"
+					:class="{ 'border-bottom': orderItems?.data?.length === 3 }"
 					v-if="orderItems?.data.length !== 0"
 					class="order-items"
 				>
 					<OrderItem
-						v-for="item in orderItems.data"
+						v-for="item in orderItems?.data"
 						:title="item.title"
 						:price="item.price"
 						:image="item.image"

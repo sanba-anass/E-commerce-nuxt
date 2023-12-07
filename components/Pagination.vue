@@ -1,5 +1,5 @@
 <template>
-	<div v-if="hidePagination" class="pagination">
+	<div v-if="isVisible" class="pagination">
 		<NuxtLink @click="previousPage" class="link">
 			<LeftArrow class="icon" />
 			<p>Previous</p>
@@ -29,7 +29,7 @@ interface Props {
 	filter: string;
 }
 const props = defineProps<Props>();
-const { changePage } = usePagination();
+const { changePage, isVisible } = usePagination();
 const route = useRoute();
 const router = useRouter();
 const count = useCount();

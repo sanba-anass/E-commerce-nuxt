@@ -28,7 +28,9 @@
 								<NuxtLink class="footer-link">Contact</NuxtLink>
 							</li>
 							<li>
-								<NuxtLink to="/account/login" class="footer-link"
+								<NuxtLink
+									:to="user ? '/account/profile' : '/account/login'"
+									class="footer-link"
 									>My Account</NuxtLink
 								>
 							</li>
@@ -76,13 +78,15 @@
 	</div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const user = useSupabaseUser()
+</script>
 
 <style scoped>
 .footer {
 	max-width: 105rem;
 	margin: 0 auto;
-	margin-top:12rem;
+	margin-top: 12rem;
 }
 .copyright {
 	padding-left: 2.5rem;

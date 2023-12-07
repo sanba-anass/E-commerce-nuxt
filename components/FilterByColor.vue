@@ -1,7 +1,15 @@
 <template>
 	<div class="colors">
 		<div v-for="(color, index) in colors">
-			<div @click="setActiveColor(index)" class="input">
+			<div
+				@click="
+					() => {
+						setActiveColor(index);
+						addToFilterValues(color.color, color.isActive);
+					}
+				"
+				class="input"
+			>
 				<input
 					:id="color.color"
 					class="color"
@@ -23,64 +31,37 @@
 			</div>
 		</div>
 	</div>
-	<button @click="reset" class="reset-button">Reset</button>
 </template>
 
 <script setup lang="ts">
-const _colors = ref([]);
-const colors = ref([
-	{ color: "rgb(0,0,0)", isActive: false },
-	{ color: "rgb(36,55,79)", isActive: false },
-	{ color: "rgb(100,149,237)", isActive: false },
-	{ color: "rgb(85,107,47)", isActive: false },
-	{ color: "rgb(172,253,47)", isActive: false },
-	{ color: "rgb(128,128,128)", isActive: false },
-	{ color: "rgb(250,240,230)", isActive: false },
-	{ color: "rgb(217,182,154)", isActive: false },
-	{ color: "rgb(231,166,72)", isActive: false },
-	{ color: "rgb(198,132,177)", isActive: false },
-	{ color: "rgb(255,255,255)", isActive: false },
-]);
+const filterValues = useCookie("filterValues");
+
+function addToFilterValues(checkboxValue: string, checked: boolean) {
+	if (!checked) {
+		filterValues.value.splice(filterValues.value?.indexOf(checkboxValue), 1);
+		console.log(filterValues.value);
+		return;
+	}
+	filterValues.value?.push(checkboxValue);
+	console.log(filterValues.value);
+}
+const colors = useCookie("colors", {
+	default: () => [
+		{ color: "rgb(0,0,0)", isActive: false },
+		{ color: "rgb(36,55,79)", isActive: false },
+		{ color: "rgb(100,149,237)", isActive: false },
+		{ color: "rgb(85,107,47)", isActive: false },
+		{ color: "rgb(172,253,47)", isActive: false },
+		{ color: "rgb(128,128,128)", isActive: false },
+		{ color: "rgb(250,240,230)", isActive: false },
+		{ color: "rgb(217,182,154)", isActive: false },
+		{ color: "rgb(231,166,72)", isActive: false },
+		{ color: "rgb(198,132,177)", isActive: false },
+		{ color: "rgb(255,255,255)", isActive: false },
+	],
+});
 function setActiveColor(index: number) {
 	colors.value[index].isActive = !colors.value[index].isActive;
-	if (colors.value[index].isActive) {
-		_colors.value.push(colors.value[index].color);
-	} else {
-		_colors.value = _colors.value.filter(
-			(color) => color !== colors.value[index].color
-		);
-	}
-}
-
-// const currentProductLength = ref();
-
-const products = useProductList();
-const supabase = useSupabaseClient();
-
-watch(
-	_colors,
-	async (newColors) => {
-		if (newColors.length === 0) {
-			const { data: defaultProducts } = await supabase
-				.from("product")
-				.select("*")
-				.range(0, 11);
-			products.value = defaultProducts;
-			return;
-		}
-		const { data: newProducts } = await supabase
-			.from("product")
-			.select("*")
-			.in("color", newColors);
-		products.value = newProducts;
-	},
-	{ deep: true }
-);
-function reset() {
-	_colors.value = [];
-	colors.value.forEach((color) => {
-		color.isActive = false;
-	});
 }
 </script>
 

@@ -22,7 +22,6 @@ import { FilterByPrice } from "#components";
 import { FilterByAvaliabilty } from "#components";
 import { FilterByBrand } from "#components";
 import { FilterByColor } from "#components";
-import { FilterByTags } from "#components";
 import { FilterBySize } from "#components";
 import { FilterByType } from "#components";
 
@@ -33,7 +32,6 @@ const filterbyContent: any = [
 	FilterByBrand,
 	FilterByColor,
 	FilterBySize,
-	FilterByTags,
 ];
 
 interface Props {

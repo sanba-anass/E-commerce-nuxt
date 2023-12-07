@@ -1,47 +1,38 @@
 <template>
 	<div class="items">
-		<div class="item">
+		<div class="item" v-for="ava in productava">
 			<div class="input">
-				<input v-model="inStock" type="checkbox" />
-				<label>In stock</label>
+				<input
+					@input="
+						($event) => {
+							addToFilterValues(ava, $event.currentTarget.checked);
+						}
+					"
+					:value="ava"
+					:id="ava"
+					v-model="productavaCookie"
+					type="checkbox"
+				/>
+				<label :for="ava">{{ ava }}</label>
 			</div>
-			<p class="amount">{{ allProducts?.length }}</p>
-		</div>
-		<div class="item">
-			<div class="input">
-				<input v-model="outOfStock" type="checkbox" />
-				<label>Out of stock</label>
-			</div>
-			<p class="amount">{{ allProducts?.length - 31 }}</p>
 		</div>
 	</div>
-	<button @click="reset" class="reset-button">Reset</button>
 </template>
 
 <script setup lang="ts">
-const products = useProductList();
-const supabase = useSupabaseClient();
-const { data: allProducts } = await supabase.from("product").select("*");
+const productava = ["inStock", "outStock"];
 
-const inStock = ref(false);
-const outOfStock = ref(false);
-watch([inStock, outOfStock], async ([newMinPrice, newMaxPrice]) => {
-	if (inStock.value) {
-		const { data } = await supabase.from("product").select("*").range(11, 24);
-		products.value = data as never[];
+const filterValues = useCookie("filterValues");
+const productavaCookie = useCookie("productavaCookie", { default: () => [] });
+
+function addToFilterValues(checkboxValue: string, checked: boolean) {
+	if (!checked) {
+		filterValues.value.splice(filterValues.value?.indexOf(checkboxValue), 1);
+		console.log(filterValues.value);
 		return;
 	}
-	if (outOfStock.value) {
-		const { data } = await supabase.from("product").select("*").limit(4);
-		products.value = data as never[];
-	} else {
-		const { data } = await supabase.from("product").select("*").range(0, 11);
-		products.value = data as never[];
-	}
-});
-function reset() {
-	inStock.value = false;
-	outOfStock.value = false;
+	filterValues.value?.push(checkboxValue);
+	console.log(filterValues.value);
 }
 </script>
 

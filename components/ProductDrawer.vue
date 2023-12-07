@@ -71,7 +71,10 @@
 					</div>
 					<ul class="colors">
 						<button
-							:class="{ 'color-outline': color.isActive }"
+							:class="{
+								'color-outline': color.isActive,
+								'color-border': color.colorName === 'white',
+							}"
 							@click="setActiveColor(index)"
 							:style="{ background: color.color }"
 							v-for="(color, index) in colors"
@@ -173,6 +176,11 @@ const colors = ref([
 	{ color: "rgb(198,132,177)", colorName: "Opera Mauve", isActive: false },
 	{ color: "rgb(217,182,154)", colorName: "Tan", isActive: false },
 	{ color: "rgb(231,166,72)", colorName: "Indian Yellow", isActive: false },
+	{ color: "rgb(255,255,255)", colorName: "white", isActive: false },
+	{ color: "rgb(0,0,0)", colorName: "black", isActive: false },
+	{ color: "rgb(85,107,47)", colorName: "Olive Green", isActive: false },
+	{ color: "rgb(100,149,237)", colorName: "Cornflower Blue", isActive: false },
+	{ color: "rgb(36,55,79)", colorName: "Dark Blue", isActive: false },
 ]);
 
 const sizes = ref([
@@ -356,6 +364,9 @@ onBeforeMount(async () => {
 });
 </script>
 <style scoped>
+.color-border {
+	border: 1px solid rgb(194, 194, 194) !important;
+}
 .cart-content {
 	padding: 1rem;
 }
@@ -596,6 +607,8 @@ button:disabled {
 	display: flex;
 	gap: 1rem;
 	margin-bottom: 2rem;
+	flex-wrap: wrap;
+	width: 20rem;
 }
 .product-option .colors .color {
 	background-color: rgb(231, 231, 231);
@@ -607,7 +620,7 @@ button:disabled {
 .sizes {
 	display: flex;
 	gap: 1rem;
-
+	flex-wrap: wrap;
 	margin-bottom: 2rem;
 }
 .product-option .sizes .size-button {

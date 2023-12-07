@@ -108,12 +108,11 @@
 const selected = ref("Featured");
 const supabase = useSupabaseClient();
 const _products = useProductList();
-const route = useRoute();
 
 
 const tabs = ref([
 	{ text: "Featured", isActive: true },
-	{ text: "Best Selle", isActive: false },
+	{ text: "Best Sellers", isActive: false },
 	{ text: "New Arrivals", isActive: false },
 ]);
 const isActive = ref(true);
@@ -174,12 +173,12 @@ watch(
 					return await supabase
 						.from("product")
 						.select("*")
-						.eq("category", "Featured Products")
+						.eq("category", "Featured")
 						.limit(4);
 				});
 				_products.value = featuredProducts.value?.data;
 				break;
-			case "Best Selle":
+			case "Best Sellers":
 				const { data: bestSellingProducts } = await useAsyncData(async () => {
 					return await supabase
 						.from("product")
