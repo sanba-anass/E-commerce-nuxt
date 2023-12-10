@@ -34,6 +34,7 @@
 	</NuxtLayout>
 </template>
 <script setup lang="ts">
+
 const { isDrawerOpen, closeCartDrawer } = useOpenCartDrawer();
 const { toastId } = useToast(30);
 const { productId } = useProductDrawer();

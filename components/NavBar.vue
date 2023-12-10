@@ -20,8 +20,8 @@
 				>
 			</li>
 			<li>
-				<a
-					:href="`/shop?page=${1}`"
+				<NuxtLink
+					:to="`/shop?page=${1}`"
 					:active-class="'active-style'"
 					@mouseenter="
 						isVisible = true;
@@ -30,7 +30,7 @@
 					@click="isVisible = false"
 					class="nav-link shop"
 					>shop
-				</a>
+				</NuxtLink>
 			</li>
 			<li>
 				<NuxtLink

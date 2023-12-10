@@ -27,13 +27,9 @@
 		<div class="wrapper">
 			<FilterBySideBar />
 			<div class="wrapper2">
-				<h2 class="error-message" v-if="_products?.length === 0">
-					no Products Found!
-				</h2>
-
-				<div v-else class="shop-items slider">
+				<div class="shop-items slider">
 					<ProductItem
-						v-for="product in prods"
+						v-for="product in prods.length === 0 ? data?.data : prods"
 						:url1="product.preview_images[0]"
 						:url2="product.preview_images[1]"
 						:title="product.title"
@@ -47,6 +43,7 @@
 						:brand="product.brand"
 					/>
 				</div>
+
 				<Pagination :filter="selectedFilter" />
 			</div>
 		</div>
@@ -69,32 +66,30 @@ const count = useCount();
 const route = useRoute();
 
 const { from, to, showPagination, hidePagination } = usePagination();
-const productFilterOptions = [
-	"Best Sellers",
-	"Featured",
-	"New Arrivals",
-	// "alphabetically A-Z",
-	// "alphabetically Z-A",
-	// "price, low to high",
-	// "price, high to low",
-	// "date old to new",
-	// "date new to old",
-];
+
+const productFilterOptions = ["Best Sellers", "Featured", "New Arrivals"];
 
 const _products = useProductList();
 
-const filter = useCookie("filter", {
-	default: () => "Best Sellers",
-});
-const selectedFilter = ref(filter.value);
+const selectedFilter = ref(
+	process.client
+		? sessionStorage.getItem("filter") ?? productFilterOptions[0]
+		: productFilterOptions[0]
+);
+
 const filterValues = useCookie("filterValues", {
 	default: () => [selectedFilter.value],
 });
+
 watch(
 	selectedFilter,
 	() => {
-		filter.value = selectedFilter.value;
-		filterValues.value[0] = filter.value;
+		process.client
+			? sessionStorage.setItem("filter", selectedFilter.value)
+			: null;
+		filterValues.value[0] = process.client
+			? sessionStorage.getItem("filter")
+			: productFilterOptions[0];
 	},
 	{ immediate: true }
 );
@@ -113,21 +108,12 @@ const prices = computed(() =>
 		maxPrice.value + 1
 	)
 );
-const { data } = await useAsyncData(async () => {
-	return await supabase
-		.from("product")
-		.select("*")
-		.range(from.value, to.value)
-		.eq("category", filter.value);
-});
-
-_products.value = data.value?.data;
-
 const prods = computed(() =>
 	_products.value.filter(
 		({ price }) => price <= maxPrice.value && price >= minPrice.value
 	)
 );
+
 watch(maxPrice, () => {
 	console.log(maxPrice.value.toString().length);
 });
@@ -136,13 +122,29 @@ watch(
 	() => {
 		if (prods.value.length <= 10) {
 			hidePagination();
-		}
-		else{
-			showPagination()
+		} else {
+			showPagination();
 		}
 	},
 	{ immediate: true }
 );
+const filter = process.client
+	? sessionStorage.getItem("filter")
+	: "Best Sellers";
+const { data } = await useAsyncData(
+	async () => {
+		return await supabase
+			.from("product")
+			.select("*")
+			.eq("category", filter)
+			.order("price", { ascending: true })
+			.range(from.value, to.value);
+	},
+	{ server: true }
+);
+
+_products.value = data.value?.data;
+
 watch(
 	[from, to, selectedFilter],
 	async ([newFrom]) => {
@@ -152,25 +154,23 @@ watch(
 		if (newFrom < 0) {
 			return;
 		}
-		const { data } = await useAsyncData(async () => {
-			return await supabase
-				.from("product")
-				.select("*")
-				.eq("category", filter.value)
-				.in("price", prices.value)
-				.order("price", { ascending: true })
-				.range(from.value, to.value);
-		});
-		_products.value = data.value?.data;
+		const { data } = await supabase
+			.from("product")
+			.select("*")
+			.eq("category", filter)
+			.order("price", { ascending: true })
+			.range(from.value, to.value);
+		_products.value = data;
 	},
 	{ immediate: true }
 );
+
 async function filterProducts() {
 	if (filterValues.value.length === 1) {
 		const { data } = await supabase
 			.from("product")
 			.select("*")
-			.eq("category", filter.value)
+			.eq("category", selectedFilter.value)
 			.in("price", prices.value)
 			.order("price", { ascending: true })
 			.range(from.value, to.value);
@@ -180,7 +180,7 @@ async function filterProducts() {
 		const { data } = await supabase
 			.from("product")
 			.select("*")
-			.eq("category", filter.value)
+			.eq("category", "Best Sellers")
 			.in("price", prices.value)
 			.order("price", { ascending: true });
 
@@ -265,7 +265,9 @@ async function filterProducts() {
 }
 watch(filterValues, async () => {}, { deep: true, immediate: true });
 watch(selectedFilter, () => {
-	filter.value = selectedFilter.value;
+	process.client
+		? sessionStorage.setItem("filter", selectedFilter.value)
+		: null;
 });
 watch(
 	[filterValues, selectedFilter],
@@ -273,7 +275,7 @@ watch(
 		const { data } = await supabase
 			.from("product")
 			.select("*")
-			.eq("category", filter.value)
+			.eq("category", selectedFilter.value)
 			.in("price", prices.value)
 			.order("price", { ascending: true });
 		console.log("categories", data?.length);

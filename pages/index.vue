@@ -37,7 +37,7 @@
 			</select>
 			<ul class="slider">
 				<ProductItem
-					v-for="product in _products.slice(0,4)"
+					v-for="product in _products.slice(0, 4)"
 					:url1="product.preview_images[0]"
 					:url2="product.preview_images[1]"
 					:title="product.title"
@@ -108,7 +108,9 @@
 const selected = ref("Featured");
 const supabase = useSupabaseClient();
 const _products = useProductList();
-
+useCookie("filter", {
+	default: () => "Best Sellers",
+});
 
 const tabs = ref([
 	{ text: "Featured", isActive: true },
@@ -126,16 +128,6 @@ const handleTabs = (index: number) => {
 			tabs.value[i].isActive = false;
 		}
 	});
-	// switch (index) {
-	// 	case 0:
-	// 		sliderImages.value = sliderImages1;
-	// 		break;
-	// 	case 1:
-	// 		sliderImages.value = sliderImages2;
-	// 		break;
-	// 	case 2:
-	// 		sliderImages.value = sliderImages3;
-	// }
 };
 const categoryItems = [
 	{
