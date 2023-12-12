@@ -1,4 +1,3 @@
-// const paypal = require("@paypal/checkout-server-sdk");
 import paypal from "@paypal/checkout-server-sdk";
 export default defineEventHandler(async (event) => {
 	const config = useRuntimeConfig();
