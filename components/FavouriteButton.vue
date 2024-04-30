@@ -1,13 +1,13 @@
 <template>
 	<button
 		@click="
-			updateIsFavourite();
+			updateLikeStatus();
 			pumpHeart();
 		"
 		:class="{ pump: isPumping }"
 		class="heart-button"
 	>
-		<HeartIconFilled v-if="currentProduct?.isFavourite" />
+		<HeartIconFilled v-if="currentProduct?.is" />
 		<HeartIcon2 v-else />
 	</button>
 </template>
@@ -17,13 +17,13 @@ interface Props {
 	id: string;
 	colorName: string;
 	size: string;
-}
+} //@ts-ignore
 
 const props = defineProps<Props>();
 const supabase = useSupabaseClient();
 const products = useProductList();
 const user = useSupabaseUser();
-const { open, toastId, isFavouriteItem } = useToast(30);
+const { open, toastId } = useToast(30);
 const { closeProductDrawer } = useProductDrawer();
 const { openDialog } = useDialog();
 
@@ -31,7 +31,7 @@ const currentProduct = computed(() =>
 	products.value.find((product) => product.id === props.id)
 );
 
-const updateIsFavourite = async () => {
+const updateLikeStatus = async () => {
 	closeProductDrawer();
 	if (!user.value) {
 		openDialog("info", "please login to be able to perform this action");
@@ -40,21 +40,22 @@ const updateIsFavourite = async () => {
 	console.log(props.id);
 
 	if (currentProduct.value) {
-		isFavouriteItem.value = true;
+		isItem.value = true;
 		toastId.value = currentProduct.value.id;
-		currentProduct.value.isFavourite = !currentProduct.value?.isFavourite;
+		currentProduct.value.is = !currentProduct.value?.is;
 
 		await supabase
 			.from("product")
 			//@ts-ignore
 			.update({
-				isFavourite: currentProduct.value?.isFavourite,
+				is: currentProduct.value?.is,
 				user_id: user.value.id,
 			})
 			.eq("id", props.id);
 
-		if (currentProduct.value?.isFavourite) {
+		if (currentProduct.value?.is) {
 			open();
+
 			await supabase.from("wishlist").insert({
 				product_id: currentProduct.value?.id,
 				title: currentProduct.value?.title,

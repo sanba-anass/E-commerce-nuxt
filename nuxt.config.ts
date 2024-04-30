@@ -4,14 +4,6 @@ export default defineNuxtConfig({
 		{ path: "~/components/icons", pathPrefix: false },
 		"~/components",
 	],
-
-	vite: {
-		vue: {
-			script: {
-				defineModel: true,
-			},
-		},
-	},
 	runtimeConfig: {
 		paypalClientSecret: process.env.NUXT_PAYPAL_CLIENT_SECRET,
 		stripeSecretKey: process.env.NUXT_STRIPE_SECRET_KEY,
