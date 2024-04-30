@@ -109,7 +109,7 @@ const selected = ref("Featured");
 const supabase = useSupabaseClient();
 const _products = useProductList();
 useCookie("filter", {
-	default: () => "Best Sellers",
+	default: () => "Best Sellers"
 });
 
 const tabs = ref([

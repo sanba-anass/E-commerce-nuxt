@@ -1,6 +1,7 @@
 {
 	"name": "nuxt-app",
 	"private": true,
+	"type":"module",
 	"scripts": {
 		"build": "nuxt build",
 		"dev": "nuxt dev --host",
@@ -10,20 +11,20 @@
 	},
 	"devDependencies": {
 		"@nuxt/devtools": "latest",
-		"@nuxtjs/google-fonts": "^3.0.2",
-		"@nuxtjs/supabase": "^1.1.4",
-		"@types/canvas-confetti": "^1.6.3",
+		"@nuxtjs/google-fonts": "^3.2.0",
+		"@nuxtjs/supabase": "^1.2.1",
+		"@types/canvas-confetti": "^1.6.4",
 		"@types/paypal__checkout-server-sdk": "^1.0.8",
-		"@vue-macros/nuxt": "^1.9.3",
-		"nuxt": "^3.7.1"
+		"@vue-macros/nuxt": "^1.9.30",
+		"nuxt": "^3.11.2"
 	},
 	"dependencies": {
-		"@nuxt/image": "^1.0.0-rc.2",
+		"@nuxt/image": "^1.6.0",
 		"@paypal/checkout-server-sdk": "^1.0.3",
-		"@paypal/paypal-js": "^7.1.0",
-		"canvas-confetti": "^1.9.1",
-		"nuxi": "^3.9.1",
-		"postcss": "^8.4.31",
-		"stripe": "^14.4.0"
+		"@paypal/paypal-js": "^8.0.5",
+		"canvas-confetti": "^1.9.2",
+		"nuxi": "^3.11.1",
+		"postcss": "^8.4.38",
+		"stripe": "^15.4.0"
 	}
 }

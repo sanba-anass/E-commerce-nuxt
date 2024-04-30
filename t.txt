@@ -1,4 +1,0 @@
-all users should have access to editing the product
-but users should not have access to the is_Favourite colum?
-
-ENABLE READ ACCESS FOR THE is_Favourite column based on user_id
