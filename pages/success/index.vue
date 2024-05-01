@@ -13,22 +13,22 @@ import confetti from "canvas-confetti";
 const user = useSupabaseUser();
 onMounted(()=>{
 console.log("before::", user.value);
-
+if (user.value === undefined) {
+	console.log("after::", user.value);
+	throw createError({
+		statusMessage: "Unauthorized",
+		statusCode: 401,
+		message: "please login to view this page",
+		fatal: true,
+	});
+} else  {
+	confetti({
+		particleCount: 200,
+		spread: 160,
+	});
+}
 })
-// if (user.value === null) {
-// 	console.log("after::", user.value);
-// 	throw createError({
-// 		statusMessage: "Unauthorized",
-// 		statusCode: 401,
-// 		message: "please login to view this page",
-// 		fatal: true,
-// 	});
-// } else if (process.client && user.value) {
-// 	confetti({
-// 		particleCount: 200,
-// 		spread: 160,
-// 	});
-// }
+
 </script>
 
 <style scoped>
