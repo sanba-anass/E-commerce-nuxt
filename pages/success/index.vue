@@ -11,15 +11,17 @@
 <script setup lang="ts">
 import confetti from "canvas-confetti";
 const user = useSupabaseUser();
+console.log("before::", user.value);
+
 if (user.value === null) {
+	console.log("after::", user.value);
 	throw createError({
 		statusMessage: "Unauthorized",
 		statusCode: 401,
 		message: "please login to view this page",
 		fatal: true,
 	});
-}
-else if (process.client && user.value ) {
+} else if (process.client && user.value) {
 	confetti({
 		particleCount: 200,
 		spread: 160,
