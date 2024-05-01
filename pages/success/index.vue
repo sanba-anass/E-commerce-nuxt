@@ -18,14 +18,14 @@ if (process.client) {
 		spread: 160,
 	});
 }
-if (!user.value) {
-	throw createError({
-		statusMessage: "Unauthorized",
-		statusCode: 401,
-		message: "please login to view this page",
-		fatal: true,
-	});
-}
+// if (!user.value) {
+// 	throw createError({
+// 		statusMessage: "Unauthorized",
+// 		statusCode: 401,
+// 		message: "please login to view this page",
+// 		fatal: true,
+// 	});
+// }
 </script>
 
 <style scoped>
