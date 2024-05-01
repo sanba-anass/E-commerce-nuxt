@@ -11,8 +11,14 @@
 <script setup lang="ts">
 import confetti from "canvas-confetti";
 const user = useSupabaseUser();
-onMounted(()=>{
-console.log("before::", user.value);
+onMounted(() => {
+	console.log("before::", user.value);
+
+	confetti({
+		particleCount: 200,
+		spread: 160,
+	});
+});
 if (user.value === undefined) {
 	console.log("after::", user.value);
 	throw createError({
@@ -21,14 +27,7 @@ if (user.value === undefined) {
 		message: "please login to view this page",
 		fatal: true,
 	});
-} else  {
-	confetti({
-		particleCount: 200,
-		spread: 160,
-	});
 }
-})
-
 </script>
 
 <style scoped>
