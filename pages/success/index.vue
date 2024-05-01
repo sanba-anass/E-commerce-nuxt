@@ -10,24 +10,16 @@
 
 <script setup lang="ts">
 import confetti from "canvas-confetti";
+definePageMeta({
+	middleware: ["success"],
+});
 const user = useSupabaseUser();
 onMounted(() => {
-	console.log("before::", user.value);
-
 	confetti({
 		particleCount: 200,
 		spread: 160,
 	});
 });
-if (user.value === undefined) {
-	console.log("after::", user.value);
-	throw createError({
-		statusMessage: "Unauthorized",
-		statusCode: 401,
-		message: "please login to view this page",
-		fatal: true,
-	});
-}
 </script>
 
 <style scoped>
